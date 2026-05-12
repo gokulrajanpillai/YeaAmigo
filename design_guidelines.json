@@ -1,0 +1,256 @@
+{
+  "theme": "light",
+  "archetype": "Archetype 1 (Organic & Earthy / Warm Hospitality) with vibrant brand accents",
+  "design_tokens": {
+    "colors": {
+      "brand": "#FF4F2B",
+      "brand_light": "#FFF0ED",
+      "brand_dark": "#C93A1A",
+      "amber": "#FF8C00",
+      "success": "#1D9E75",
+      "danger": "#E24B4A",
+      "text_primary": "#1A1A1A",
+      "text_muted": "#6B6B6B",
+      "text_hint": "#ABABAB",
+      "bg_white": "#FFFFFF",
+      "bg_surface": "#F7F6F3",
+      "border_subtle": "#E5E5E0",
+      "transparent": "rgba(0,0,0,0)"
+    },
+    "typography": {
+      "primary_font": "Sora",
+      "mono_font": "JetBrains Mono",
+      "sizes": {
+        "xs": 12,
+        "sm": 14,
+        "base": 16,
+        "lg": 18,
+        "xl": 20,
+        "2xl": 24,
+        "3xl": 30,
+        "4xl": 36
+      },
+      "weights": {
+        "regular": "400",
+        "medium": "500",
+        "semibold": "600",
+        "bold": "700"
+      }
+    },
+    "spacing": {
+      "xs": 4,
+      "sm": 8,
+      "md": 12,
+      "lg": 16,
+      "xl": 24,
+      "2xl": 32,
+      "3xl": 48
+    },
+    "radius": {
+      "sm": 6,
+      "md": 10,
+      "lg": 16,
+      "pill": 999
+    },
+    "shadows": {
+      "sm": {
+        "shadowColor": "#1A1A1A",
+        "shadowOffset": { "width": 0, "height": 2 },
+        "shadowOpacity": 0.05,
+        "shadowRadius": 4,
+        "elevation": 2
+      },
+      "md": {
+        "shadowColor": "#1A1A1A",
+        "shadowOffset": { "width": 0, "height": 4 },
+        "shadowOpacity": 0.1,
+        "shadowRadius": 8,
+        "elevation": 4
+      }
+    }
+  },
+  "global_components": {
+    "buttons": {
+      "primary": "bg-brand text-white rounded-pill px-lg py-md min-h-[44px] justify-center items-center flex-row",
+      "secondary": "bg-brand_light text-brand rounded-pill px-lg py-md min-h-[44px] justify-center items-center flex-row",
+      "outline": "border border-border_subtle bg-white text-text_primary rounded-pill px-lg py-md min-h-[44px]",
+      "ghost": "bg-transparent text-text_muted rounded-pill px-lg py-md min-h-[44px]"
+    },
+    "badges": {
+      "status_pending": "bg-bg_surface text-text_muted rounded-pill px-sm py-xs text-xs font-mono",
+      "status_preparing": "bg-brand_light text-brand rounded-pill px-sm py-xs text-xs font-mono",
+      "status_ready": "bg-[#FFF8ED] text-amber rounded-pill px-sm py-xs text-xs font-mono",
+      "status_en_route": "bg-[#E8F5F1] text-success rounded-pill px-sm py-xs text-xs font-mono",
+      "status_delivered": "bg-bg_surface text-text_muted rounded-pill px-sm py-xs text-xs font-mono line-through"
+    },
+    "cards": {
+      "default": "bg-white rounded-lg p-lg border border-border_subtle",
+      "elevated": "bg-white rounded-lg p-lg shadow-sm"
+    },
+    "skeletons": {
+      "base": "bg-border_subtle rounded-md overflow-hidden opacity-50 relative",
+      "animation": "Use react-native-reanimated for a continuous shimmer translation effect across the view."
+    }
+  },
+  "shared_screens": {
+    "onboarding": {
+      "layout": "Full-screen vertical centered flex with safe area insets.",
+      "components": [
+        "Brand Hero: 'Yeamigo' text-4xl font-bold text-brand, tagline 'Good food, great amigos.' text-base text-text_muted.",
+        "Role Selector: 4 large elevated cards (Customer, Restaurant, Rider, Admin). Each containing a Lucide icon and role title.",
+        "Auth Form: TextInput with border-subtle and rounded-md. Primary button for Login/Signup."
+      ]
+    },
+    "empty_states": {
+      "layout": "Centered flex-1 with generous padding (p-3xl).",
+      "components": [
+        "Icon: Oversized lucide icon (e.g., ShoppingBag for cart) colored text-hint.",
+        "Title: text-xl text-text_primary font-bold text-center mt-lg.",
+        "Subtitle: text-base text-text_muted text-center mt-sm.",
+        "Action: Optional Outline/Primary button to redirect the user."
+      ]
+    }
+  },
+  "role_interfaces": {
+    "customer": {
+      "navigation": "Bottom Tab Nav (Home, Orders, Support, Profile). Hidden on deep screens (e.g., Cart, Tracking).",
+      "screens": {
+        "home_discovery": {
+          "layout": "Vertical ScrollView.",
+          "components": [
+            "Header: Sticky, bg-white with Safe Area Top.",
+            "Hero Search Bar: pill-shaped, bg-bg_surface, min-h-[44px], lucide search icon.",
+            "Category Pills: Horizontal FlatList of filter chips (e.g., Burgers, Pizza, Vegan).",
+            "Restaurant Grid: flex-row flex-wrap justify-between. Cards take 48% width.",
+            "Restaurant Card: Cover image (aspect 4:3), rounded-lg. Absolute positioned logo overlay (rounded-pill, border-2 border-white) bottom-left of image. Details below: Title (bold text-base), Rating (star icon + text), ETA / Delivery Fee."
+          ]
+        },
+        "restaurant_menu": {
+          "layout": "Parallax Header + SectionList or ScrollView.",
+          "components": [
+            "Parallax Banner: Image stretching on pull-down.",
+            "Sticky Category Tabs: Horizontal scroll pinning to top beneath header.",
+            "Item Card: flex-row, text details on left (title, desc, price), thumbnail image on right (rounded-md, size 80x80)."
+          ]
+        },
+        "item_detail_sheet": {
+          "layout": "Bottom Sheet (modal presentation).",
+          "components": [
+            "Hero Photo: full width, aspect 16:9.",
+            "Variants: Radio button rows for sizing/options.",
+            "Quantity Stepper: -, 1, + buttons in a bg-bg_surface pill.",
+            "Add to Order: Massive primary CTA button pinned to safe-area bottom."
+          ]
+        },
+        "cart": {
+          "layout": "Vertical ScrollView with fixed bottom panel.",
+          "components": [
+            "Order List: Items with inline quantity adjusters.",
+            "Receipt Summary: Subtotal, Fees, Total with dashed border-t border-border_subtle separating lines.",
+            "Checkout Button: Sticky to bottom safe area."
+          ]
+        },
+        "live_tracking": {
+          "layout": "Split view: Map on top (absolute fill or aspect 1:1), Tracker UI Sheet below.",
+          "components": [
+            "Map Section: Image placeholder with rider/destination pins.",
+            "Progress Tracker: Vertical step indicator (dots connected by lines). Active step in brand color.",
+            "Dynamic Message: 'Rider is 3 mins away' in bold text-2xl Sora.",
+            "Action Buttons: Ghost button for 'Call Rider', Outline for 'Support'."
+          ]
+        }
+      }
+    },
+    "restaurant_owner": {
+      "navigation": "Drawer/Sidebar. Main content area takes remaining space.",
+      "screens": {
+        "dashboard": {
+          "layout": "Grid of metrics and vertical list for live feed.",
+          "components": [
+            "Live Order Cards: Elevated cards for recent incoming orders.",
+            "Pulse Animation: 'New Order' badge with continuous scaling and fading opacity animation using react-native-reanimated."
+          ]
+        },
+        "kanban_queue": {
+          "layout": "Horizontal ScrollView containing 5 vertical FlatLists (swimlanes).",
+          "components": [
+            "Swimlanes: Pending, Preparing, Ready, En Route, Delivered. bg-bg_surface rounded-lg w-[300px] p-md mx-sm.",
+            "Kanban Card: Elevated card. Shows Order ID (JetBrains Mono text-sm), Items summary, elapsed Time badge."
+          ]
+        },
+        "menu_builder": {
+          "layout": "Vertical list view with edit toggles.",
+          "components": [
+            "Category Headers with 'Add Item' outline button.",
+            "List Items: Draggable rows with edit/delete icon actions."
+          ]
+        }
+      }
+    },
+    "delivery_rider": {
+      "navigation": "Bottom Tab Nav (Home, History, Profile).",
+      "screens": {
+        "home": {
+          "layout": "Map view taking up most of the screen. Bottom panel for status.",
+          "components": [
+            "Online Toggle: Massive pill slider or button. text-success when online, text-text_muted when offline.",
+            "Earnings Ring: Circular progress indicator around user avatar showing daily goal completion."
+          ]
+        },
+        "incoming_offer": {
+          "layout": "Bottom Sheet popping up abruptly (high priority modal).",
+          "components": [
+            "Route Summary: Restaurant to Customer address mapping.",
+            "Earnings: Prominently displayed text-3xl font-bold text-text_primary.",
+            "Countdown Ring: 20-second SVG circular timer around the Accept button. Animates strokeDashoffset.",
+            "Reject button: ghost styling."
+          ]
+        },
+        "active_delivery": {
+          "layout": "Full screen map with floating action cards over it.",
+          "components": [
+            "Pickup/Delivery Phases: Card indicating current phase.",
+            "Action Swipe: 'Slide to confirm pickup' interactive component."
+          ]
+        }
+      }
+    },
+    "platform_admin": {
+      "navigation": "Drawer Nav.",
+      "screens": {
+        "overview": {
+          "layout": "Responsive grid (flex-row flex-wrap) of summary cards.",
+          "components": [
+            "Metric Cards: Total Revenue, Active Riders, Live Orders. Elevated cards.",
+            "Data Tables: Recent support tickets, flagged restaurants."
+          ]
+        }
+      }
+    }
+  },
+  "media_assets": {
+    "food_items": [
+      { "url": "https://images.unsplash.com/photo-1762922425249-144c3bb9167e?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NTY2Nzd8MHwxfHNlYXJjaHwyfHxkZWxpY2lvdXMlMjBidXJnZXIlMjBhbmQlMjBmcmllcyUyMG1lYWx8ZW58MHx8fHwxNzc4NjI5OTk2fDA&ixlib=rb-4.1.0&q=85", "description": "Burger and fries meal" },
+      { "url": "https://images.unsplash.com/photo-1773944052254-b15b9b4a8736?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NTYxODl8MHwxfHNlYXJjaHwxfHxnb3VybWV0JTIwcGl6emElMjBzbGljZXxlbnwwfHx8fDE3Nzg2Mjk5OTZ8MA&ixlib=rb-4.1.0&q=85", "description": "Gourmet Pizza Slice" },
+      { "url": "https://images.unsplash.com/photo-1763683945180-50ed3c50db3f?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NTYxODl8MHwxfHNlYXJjaHwzfHxnb3VybWV0JTIwcGl6emElMjBzbGljZXxlbnwwfHx8fDE3Nzg2Mjk5OTZ8MA&ixlib=rb-4.1.0&q=85", "description": "Pizza Hands" }
+    ],
+    "restaurants": [
+      { "url": "https://images.unsplash.com/photo-1773960030846-3b82679b04e8?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NTY2OTV8MHwxfHNlYXJjaHwyfHxtb2Rlcm4lMjBjYWZlJTIwcmVzdGF1cmFudCUyMGV4dGVyaW9yfGVufDB8fHx8MTc3ODYyOTk5N3ww&ixlib=rb-4.1.0&q=85", "description": "Modern Cafe Exterior" },
+      { "url": "https://images.pexels.com/photos/12193139/pexels-photo-12193139.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940", "description": "Cozy Outdoor Cafe" }
+    ],
+    "placeholders": [
+      { "url": "https://images.unsplash.com/photo-1524661135-423995f22d0b?auto=format&fit=crop&w=800&q=80", "description": "Map Placeholder for Active Delivery" },
+      { "url": "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=256&q=80", "description": "Avatar Placeholder" }
+    ]
+  },
+  "implementation_instructions_for_main_agent": {
+    "framework": "React Native (Expo)",
+    "styling": "Use standard React Native StyleSheet or NativeWind. Adhere to design tokens exactly. Avoid standard HTML elements; strictly use React Native primitives (View, Text, TouchableOpacity, Image, ScrollView, FlatList).",
+    "data_testids": "MANDATORY. Every interactive component (buttons, inputs, toggles, list items) MUST have a data-testid attribute formatted as kebab-case, e.g., 'customer-login-button'.",
+    "safe_area": "Use 'react-native-safe-area-context' to wrap screens and appropriately apply padding to top/bottom navs to prevent notch/home-indicator overlaps.",
+    "icons": "Use 'lucide-react-native'. Size: 24 for standard, 20 for inline elements. Color: text_muted by default.",
+    "animations": "Use 'react-native-reanimated' for the Restaurant Order pulse animation and the Rider 20-second countdown ring.",
+    "tap_targets": "Ensure minimum 44x44 points for all TouchableOpacity elements by padding or specifying minHeight.",
+    "grids": "CSS Grid is not natively supported in React Native. Use 'flexDirection: row' with 'flexWrap: wrap' for the 2-column discovery feed (width: '48%', justifyContent: 'space-between')."
+  }
+}
