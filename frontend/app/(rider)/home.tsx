@@ -49,7 +49,7 @@ export default function RiderHome() {
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: online ? '#fff' : colors.bgSurface }} edges={['top']}>
-      <ScrollView
+      <ScrollView showsVerticalScrollIndicator={false}
         refreshControl={<RefreshControl refreshing={refreshing} onRefresh={() => { setRefreshing(true); load(); }} />}
         contentContainerStyle={{ padding: space.lg, paddingBottom: 80 }}>
         <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>

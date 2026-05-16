@@ -11,6 +11,10 @@ export const colors = {
   accentLight: '#FBF1D3',
   accentDark: '#A88017',
 
+  // Back-compat aliases (older screens use `amber`)
+  amber: '#E2B43A',
+  amberLight: '#FBF1D3',
+
   // Berry/plum — for special CTAs
   berry: '#7A2E55',
   berryLight: '#F4E4EC',

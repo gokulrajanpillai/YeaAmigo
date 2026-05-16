@@ -1,4 +1,5 @@
 import { Tabs } from 'expo-router';
+import { Text } from 'react-native';
 import { Home, ShoppingBag, HelpCircle, User } from 'lucide-react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { colors } from '../../src/theme';
@@ -8,6 +9,9 @@ export default function CustomerLayout() {
   const insets = useSafeAreaInsets();
   const { t } = useI18n();
   const bottomPad = Math.max(insets.bottom, 8);
+  const labelFor = (key: string) => ({ focused, color }: { focused: boolean; color: string }) => (
+    <Text style={{ color, fontSize: 11, fontWeight: focused ? '700' : '500', marginTop: 2 }}>{t(key)}</Text>
+  );
   return (
     <Tabs screenOptions={{
       headerShown: false,
@@ -16,20 +20,20 @@ export default function CustomerLayout() {
       tabBarStyle: {
         borderTopColor: colors.borderSubtle,
         backgroundColor: colors.bgWhite,
-        height: 60 + bottomPad,
-        paddingTop: 8,
-        paddingBottom: bottomPad,
+        height: 64 + bottomPad,
+        paddingTop: 6,
+        paddingBottom: bottomPad + 4,
       },
-      tabBarLabelStyle: { fontSize: 12, fontWeight: '600', marginTop: 2 },
       tabBarItemStyle: { paddingVertical: 4 },
     }}>
-      <Tabs.Screen name="home" options={{ title: t('tab_home'), tabBarIcon: ({ color, size }) => <Home color={color} size={size} /> }} />
-      <Tabs.Screen name="orders" options={{ title: t('tab_orders'), tabBarIcon: ({ color, size }) => <ShoppingBag color={color} size={size} /> }} />
-      <Tabs.Screen name="support" options={{ title: t('tab_support'), tabBarIcon: ({ color, size }) => <HelpCircle color={color} size={size} /> }} />
-      <Tabs.Screen name="profile" options={{ title: t('tab_profile'), tabBarIcon: ({ color, size }) => <User color={color} size={size} /> }} />
+      <Tabs.Screen name="home" options={{ tabBarLabel: labelFor('tab_home'), tabBarIcon: ({ color, size }) => <Home color={color} size={size} /> }} />
+      <Tabs.Screen name="orders" options={{ tabBarLabel: labelFor('tab_orders'), tabBarIcon: ({ color, size }) => <ShoppingBag color={color} size={size} /> }} />
+      <Tabs.Screen name="support" options={{ tabBarLabel: labelFor('tab_support'), tabBarIcon: ({ color, size }) => <HelpCircle color={color} size={size} /> }} />
+      <Tabs.Screen name="profile" options={{ tabBarLabel: labelFor('tab_profile'), tabBarIcon: ({ color, size }) => <User color={color} size={size} /> }} />
       <Tabs.Screen name="restaurant/[id]" options={{ href: null }} />
       <Tabs.Screen name="cart" options={{ href: null }} />
       <Tabs.Screen name="order/[id]" options={{ href: null }} />
+      <Tabs.Screen name="address" options={{ href: null }} />
     </Tabs>
   );
 }

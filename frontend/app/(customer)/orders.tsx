@@ -2,13 +2,15 @@ import React, { useState, useCallback } from 'react';
 import { View, Text, ScrollView, TouchableOpacity, StyleSheet, RefreshControl } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter, useFocusEffect } from 'expo-router';
-import { ShoppingBag } from 'lucide-react-native';
 import { apiGet } from '../../src/api';
-import { colors, radius, space } from '../../src/theme';
+import { colors, radius, space, fmtINR } from '../../src/theme';
 import { StatusBadge, EmptyState, Button } from '../../src/components/UI';
+import { useI18n } from '../../src/i18n';
+import { Penguin } from '../../src/components/Mascot';
 
 export default function CustomerOrders() {
   const router = useRouter();
+  const { t, tn } = useI18n();
   const [orders, setOrders] = useState<any[]>([]);
   const [tab, setTab] = useState<'active' | 'past'>('active');
   const [refreshing, setRefreshing] = useState(false);
@@ -27,36 +29,37 @@ export default function CustomerOrders() {
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: '#fff' }} edges={['top']}>
       <View style={{ padding: space.lg }}>
-        <Text style={styles.h1}>Your Orders</Text>
+        <Text style={styles.h1}>{t('your_orders')}</Text>
         <View style={styles.tabs}>
           <TouchableOpacity testID="tab-active" onPress={() => setTab('active')} style={[styles.tab, tab === 'active' && styles.tabActive]}>
-            <Text style={[styles.tabTxt, tab === 'active' && styles.tabTxtActive]}>Active</Text>
+            <Text style={[styles.tabTxt, tab === 'active' && styles.tabTxtActive]}>{t('active_tab')}</Text>
           </TouchableOpacity>
           <TouchableOpacity testID="tab-past" onPress={() => setTab('past')} style={[styles.tab, tab === 'past' && styles.tabActive]}>
-            <Text style={[styles.tabTxt, tab === 'past' && styles.tabTxtActive]}>Past</Text>
+            <Text style={[styles.tabTxt, tab === 'past' && styles.tabTxtActive]}>{t('past_tab')}</Text>
           </TouchableOpacity>
         </View>
       </View>
       <ScrollView
+        showsVerticalScrollIndicator={false}
         refreshControl={<RefreshControl refreshing={refreshing} onRefresh={() => { setRefreshing(true); load(); }} />}
         contentContainerStyle={{ padding: space.lg, paddingTop: 0 }}>
         {filtered.length === 0 ? (
           <EmptyState
-            icon={<ShoppingBag size={64} color={colors.textHint} />}
-            title="No orders yet"
-            subtitle="Your order history will appear here"
-            action={<Button title="Browse restaurants" onPress={() => router.replace('/(customer)/home' as any)} />}
+            icon={<Penguin size={140} mood="waiting" role="customer" animated />}
+            title={t('no_orders')}
+            subtitle={t('no_orders_sub')}
+            action={<Button title={t('browse_restaurants')} onPress={() => router.replace('/(customer)/home' as any)} />}
           />
         ) : (
           filtered.map(o => (
             <TouchableOpacity key={o.id} testID={`order-${o.id}`} onPress={() => router.push(`/(customer)/order/${o.id}` as any)} style={styles.card}>
               <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
-                <Text style={{ fontSize: 16, fontWeight: '700' }}>{o.restaurant_name}</Text>
+                <Text style={{ fontSize: 16, fontWeight: '700' }}>{tn(o.restaurant_name)}</Text>
                 <StatusBadge status={o.status} />
               </View>
               <Text style={{ color: colors.textMuted, fontSize: 12, marginTop: 4 }}>{o.order_ref} · {new Date(o.created_at).toLocaleString()}</Text>
-              <Text style={{ marginTop: 8, color: colors.textPrimary }}>{o.items.slice(0, 2).map((i: any) => `${i.quantity}× ${i.name}`).join(', ')}{o.items.length > 2 ? ` and ${o.items.length - 2} more` : ''}</Text>
-              <Text style={{ marginTop: 8, fontWeight: '700', color: colors.brand }}>₹{o.total_gbp.toFixed(2)}</Text>
+              <Text style={{ marginTop: 8, color: colors.textPrimary }}>{o.items.slice(0, 2).map((i: any) => `${i.quantity}× ${tn(i.name)}`).join(', ')}{o.items.length > 2 ? ` +${o.items.length - 2}` : ''}</Text>
+              <Text style={{ marginTop: 8, fontWeight: '700', color: colors.brand }}>{fmtINR(o.total_gbp)}</Text>
             </TouchableOpacity>
           ))
         )}

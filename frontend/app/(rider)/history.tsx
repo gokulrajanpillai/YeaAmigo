@@ -27,7 +27,7 @@ export default function RiderHistory() {
           <View><Text style={{ color: colors.textMuted, fontSize: 12 }}>Deliveries</Text><Text style={{ fontSize: 24, fontWeight: '800' }}>{orders.length}</Text></View>
         </View>
       </View>
-      <ScrollView refreshControl={<RefreshControl refreshing={refreshing} onRefresh={() => { setRefreshing(true); load(); }} />} contentContainerStyle={{ padding: space.lg }}>
+      <ScrollView showsVerticalScrollIndicator={false} refreshControl={<RefreshControl refreshing={refreshing} onRefresh={() => { setRefreshing(true); load(); }} />} contentContainerStyle={{ padding: space.lg }}>
         {orders.length === 0 ? (
           <EmptyState icon={<Clock size={64} color={colors.textHint} />} title="No deliveries yet" subtitle="Past deliveries will appear here" />
         ) : orders.map(o => (

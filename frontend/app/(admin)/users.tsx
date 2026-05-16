@@ -12,7 +12,7 @@ export default function AdminUsers() {
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: '#fff' }} edges={['top']}>
       <View style={{ padding: space.lg }}><Text style={{ fontSize: 22, fontWeight: '700' }}>Users ({items.length})</Text></View>
-      <ScrollView contentContainerStyle={{ padding: space.lg }}>
+      <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ padding: space.lg }}>
         {items.map(u => (
           <Card key={u.id} style={{ marginBottom: 8 }}>
             <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>

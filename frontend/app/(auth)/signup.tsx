@@ -42,7 +42,7 @@ export default function Signup() {
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: '#fff' }}>
       <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
-        <ScrollView contentContainerStyle={{ padding: space.xxl }}>
+        <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ padding: space.xxl }}>
           <TouchableOpacity onPress={() => router.back()} testID="back-btn"><Text style={{ color: colors.textMuted }}>← Back</Text></TouchableOpacity>
           <Text style={styles.h1}>Create your account</Text>
           <Text style={styles.sub}>Pick what brings you to YeaAmigo</Text>

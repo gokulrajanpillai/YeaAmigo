@@ -8,9 +8,9 @@ YeaAmigo is a mobile-first food delivery platform for India connecting 4 roles i
 - **Admin** — platform metrics, restaurant approvals, oversight
 
 ## Brand
-- Name: **YeaAmigo** · Tagline: "Good food, great amigos."
+- Name: **YeaAmigo** · Tagline: **"Food delivery made easy"** (translated to 7 languages)
 - Palette: deep ocean teal `#0B5D5A` (primary), mustard gold `#E2B43A` (accent), berry plum `#7A2E55`, warm cream surface `#FAF7F1`. Deliberately non-orange; not similar to Swiggy/Zomato.
-- Original SVG penguin mascot (parent + child variant) with mood variants (happy, hungry, searching, celebrate, waiting, sorry, sleeping).
+- Original SVG penguin mascot (parent + child variant, role variants: main/child/chef/delivery/customer) with mood variants (happy, hungry, searching, celebrate, waiting, sorry, sleeping). Used in splash, login, home, profile, empty cart, empty orders, support, order-tracking success.
 - Currency: **INR (₹)** throughout.
 
 ## Tech
@@ -55,3 +55,17 @@ YeaAmigo is a mobile-first food delivery platform for India connecting 4 roles i
 - Live geolocation tracking on map (placeholder map used)
 - Recharts charts in restaurant dashboard
 - Image upload (menu items use pre-set Unsplash URLs)
+
+## v1.1 — Address & Polish (current iteration)
+- ✅ **Global AuthGuard**: root layout watches auth state + segments; protected routes immediately redirect to /login on logout. Cart cleared on logout.
+- ✅ **Hidden scrollbars** across all 20 screens: `showsVerticalScrollIndicator={false}` + `showsHorizontalScrollIndicator={false}` on every ScrollView/FlatList plus global ::-webkit-scrollbar CSS injection on web preview.
+- ✅ **Map-based Address Selection** (OpenStreetMap + Leaflet, **no API key** required):
+  - New `(customer)/address.tsx` screen with three modes: saved list, map picker, manual form.
+  - Leaflet OSM tiles rendered in WebView (native) and iframe (web) with center-pin crosshair.
+  - Nominatim forward search (typeahead) + reverse geocode (auto-fills street/city/pincode as pin moves).
+  - "Use current location" via geolocation API.
+  - Persisted addresses with Home/Work/Other labels via AddressContext + AsyncStorage.
+  - Wired into home location header (tap to change) and cart delivery address.
+- ✅ **i18n dynamic content**: phrases dictionary now translates dish names, descriptions, cuisine tags, categories, dietary tags ("Vegetarian/Spicy/Gluten-Free") across 7 languages. Verified Hindi shows "मार्गेरीटा / दीवोला / स्वच्छता 5/5".
+- ✅ **Tab bar labels**: explicit `tabBarLabel: () => <Text>...</Text>` ensures cross-platform legible labels.
+- ✅ **Theme aliases**: added `colors.amber`/`amberLight` aliases to `accent`/`accentLight` for legacy references.

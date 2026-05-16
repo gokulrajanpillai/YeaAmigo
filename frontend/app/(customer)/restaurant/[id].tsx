@@ -1,15 +1,17 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { View, Text, ScrollView, Image, TouchableOpacity, StyleSheet, Modal, TextInput, Alert } from 'react-native';
+import { View, Text, ScrollView, Image, TouchableOpacity, StyleSheet, Modal, Alert } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { ArrowLeft, Plus, Minus, Heart, Star, Clock } from 'lucide-react-native';
 import { apiGet, loadCart, saveCart } from '../../../src/api';
-import { colors, radius, space, shadow } from '../../../src/theme';
+import { colors, radius, space, shadow, fmtINR } from '../../../src/theme';
 import { Button, Skeleton } from '../../../src/components/UI';
+import { useI18n } from '../../../src/i18n';
 
 export default function RestaurantPage() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const router = useRouter();
+  const { t, tn } = useI18n();
   const [rest, setRest] = useState<any>(null);
   const [menu, setMenu] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -44,10 +46,9 @@ export default function RestaurantPage() {
       ? existing
       : { restaurant_id: id!, restaurant_name: rest.name, items: [] };
     if (existing && existing.restaurant_id !== id) {
-      // Different restaurant - confirm clear
-      Alert.alert('Start new order?', `You have items from ${existing.restaurant_name}. Clear and start with ${rest.name}?`, [
-        { text: 'Cancel', style: 'cancel' },
-        { text: 'Yes', onPress: async () => {
+      Alert.alert(t('confirm'), `${existing.restaurant_name} → ${rest.name}?`, [
+        { text: t('cancel'), style: 'cancel' },
+        { text: t('yes'), onPress: async () => {
           cart = { restaurant_id: id!, restaurant_name: rest.name, items: [] };
           cart.items.push({ item_id: selectedItem.id, name: selectedItem.name, price_gbp: selectedItem.price_gbp, quantity: qty, image_url: selectedItem.image_url });
           await saveCart(cart);
@@ -73,7 +74,9 @@ export default function RestaurantPage() {
 
   return (
     <View style={{ flex: 1, backgroundColor: '#fff' }}>
-      <ScrollView contentContainerStyle={{ paddingBottom: cartCount > 0 ? 100 : 24 }}>
+      <ScrollView
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={{ paddingBottom: cartCount > 0 ? 100 : 24 }}>
         <View>
           <Image source={{ uri: rest.banner_url }} style={{ width: '100%', height: 220, backgroundColor: colors.bgSurface }} />
           <SafeAreaView edges={['top']} style={{ position: 'absolute', top: 0, left: 0, right: 0 }}>
@@ -86,33 +89,33 @@ export default function RestaurantPage() {
 
         <View style={{ paddingHorizontal: space.lg, marginTop: -30 }}>
           <View style={[styles.infoCard, shadow.sm]}>
-            <Text style={styles.restName}>{rest.name}</Text>
+            <Text style={styles.restName}>{tn(rest.name)}</Text>
             <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 6 }}>
-              <Star size={14} color={colors.amber} fill={colors.amber} />
+              <Star size={14} color={colors.accent} fill={colors.accent} />
               <Text style={{ marginLeft: 4, fontSize: 13, fontWeight: '600' }}>{rest.rating?.toFixed(1)}</Text>
-              <Text style={{ marginLeft: 8, color: colors.textMuted, fontSize: 13 }}>{(rest.cuisine_tags || []).join(' · ')}</Text>
+              <Text style={{ marginLeft: 8, color: colors.textMuted, fontSize: 13 }}>{(rest.cuisine_tags || []).map((c: string) => tn(c)).join(' · ')}</Text>
             </View>
-            <View style={{ flexDirection: 'row', marginTop: 10 }}>
-              <View style={styles.infoChip}><Clock size={14} color={colors.brand} /><Text style={styles.infoChipTxt}>{rest.avg_prep_mins}–{rest.avg_prep_mins + 15} min</Text></View>
-              <View style={styles.infoChip}><Text style={styles.infoChipTxt}>₹49 delivery</Text></View>
-              <View style={styles.infoChip}><Text style={styles.infoChipTxt}>Hygiene {rest.hygiene_score}/5</Text></View>
+            <View style={{ flexDirection: 'row', marginTop: 10, flexWrap: 'wrap' }}>
+              <View style={styles.infoChip}><Clock size={14} color={colors.brand} /><Text style={styles.infoChipTxt}>{rest.avg_prep_mins}–{rest.avg_prep_mins + 15} {t('min_word')}</Text></View>
+              <View style={styles.infoChip}><Text style={styles.infoChipTxt}>₹49 {t('delivery_fee_short')}</Text></View>
+              <View style={styles.infoChip}><Text style={styles.infoChipTxt}>{t('hygiene_label')} {rest.hygiene_score}/5</Text></View>
             </View>
-            <Text style={{ marginTop: 10, color: colors.textMuted, fontSize: 13, lineHeight: 19 }}>{rest.description}</Text>
+            <Text style={{ marginTop: 10, color: colors.textMuted, fontSize: 13, lineHeight: 19 }}>{tn(rest.description)}</Text>
           </View>
         </View>
 
         {menu.map(group => (
           <View key={group.category} style={{ marginTop: space.xl, paddingHorizontal: space.lg }}>
-            <Text style={styles.catTitle}>{group.category}</Text>
+            <Text style={styles.catTitle}>{tn(group.category)}</Text>
             {group.items.map((it: any) => (
               <TouchableOpacity
                 key={it.id} testID={`menu-item-${it.id}`}
                 onPress={() => { setSelectedItem(it); setQty(1); }}
                 style={styles.itemRow}>
                 <View style={{ flex: 1, minWidth: 0, paddingRight: 12 }}>
-                  <Text style={styles.itemName} numberOfLines={1}>{it.name}</Text>
-                  <Text style={styles.itemDesc} numberOfLines={2}>{it.description}</Text>
-                  <Text style={styles.itemPrice}>₹{it.price_gbp.toFixed(0)}</Text>
+                  <Text style={styles.itemName} numberOfLines={1}>{tn(it.name)}</Text>
+                  <Text style={styles.itemDesc} numberOfLines={2}>{tn(it.description)}</Text>
+                  <Text style={styles.itemPrice}>{fmtINR(it.price_gbp)}</Text>
                 </View>
                 {it.image_url ? <Image source={{ uri: it.image_url }} style={styles.itemImg} /> : null}
               </TouchableOpacity>
@@ -123,8 +126,8 @@ export default function RestaurantPage() {
 
       {cartCount > 0 && (
         <TouchableOpacity testID="view-cart-bar" onPress={() => router.push('/(customer)/cart' as any)} style={styles.cartBar}>
-          <Text style={{ color: '#fff', fontWeight: '700' }}>View cart — {cartCount} item{cartCount > 1 ? 's' : ''}</Text>
-          <Text style={{ color: '#fff', fontWeight: '700' }}>₹{cartTotal.toFixed(2)}</Text>
+          <Text style={{ color: '#fff', fontWeight: '700' }}>{t('view_cart')} — {cartCount} item{cartCount > 1 ? 's' : ''}</Text>
+          <Text style={{ color: '#fff', fontWeight: '700' }}>{fmtINR(cartTotal)}</Text>
         </TouchableOpacity>
       )}
 
@@ -132,14 +135,14 @@ export default function RestaurantPage() {
         <View style={styles.sheetBg}>
           <View style={styles.sheet}>
             <TouchableOpacity testID="sheet-close" onPress={() => setSelectedItem(null)} style={{ alignSelf: 'flex-end' }}>
-              <Text style={{ color: colors.textMuted, fontSize: 14 }}>Close</Text>
+              <Text style={{ color: colors.textMuted, fontSize: 14 }}>{t('close')}</Text>
             </TouchableOpacity>
             {selectedItem?.image_url && <Image source={{ uri: selectedItem.image_url }} style={styles.sheetImg} />}
-            <Text style={styles.sheetName}>{selectedItem?.name}</Text>
-            <Text style={styles.sheetDesc}>{selectedItem?.description}</Text>
+            <Text style={styles.sheetName}>{tn(selectedItem?.name)}</Text>
+            <Text style={styles.sheetDesc}>{tn(selectedItem?.description)}</Text>
             {(selectedItem?.dietary_tags?.length > 0) && (
               <Text style={{ color: colors.success, fontSize: 12, marginTop: 6 }}>
-                {selectedItem.dietary_tags.join(' · ')}
+                {selectedItem.dietary_tags.map((d: string) => tn(d)).join(' · ')}
               </Text>
             )}
             <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginTop: space.xl }}>
@@ -150,7 +153,7 @@ export default function RestaurantPage() {
               </View>
             </View>
             <View style={{ marginTop: 14 }}>
-              <Button testID="add-to-order" title={`Add ${qty} for ₹${(selectedItem?.price_gbp * qty || 0).toFixed(0)}`} onPress={addToCart} />
+              <Button testID="add-to-order" title={`${t('add_to_order')} ${qty} · ${fmtINR((selectedItem?.price_gbp || 0) * qty)}`} onPress={addToCart} />
             </View>
           </View>
         </View>
@@ -163,7 +166,7 @@ const styles = StyleSheet.create({
   iconBtn: { width: 40, height: 40, borderRadius: 20, backgroundColor: 'rgba(0,0,0,0.45)', alignItems: 'center', justifyContent: 'center' },
   infoCard: { backgroundColor: '#fff', borderRadius: radius.lg, padding: space.lg, borderWidth: 0.5, borderColor: colors.borderSubtle },
   restName: { fontSize: 22, fontWeight: '700', color: colors.textPrimary },
-  infoChip: { flexDirection: 'row', alignItems: 'center', backgroundColor: colors.brandLight, paddingHorizontal: 10, paddingVertical: 6, borderRadius: radius.pill, marginRight: 6 },
+  infoChip: { flexDirection: 'row', alignItems: 'center', backgroundColor: colors.brandLight, paddingHorizontal: 10, paddingVertical: 6, borderRadius: radius.pill, marginRight: 6, marginBottom: 6 },
   infoChipTxt: { color: colors.brandDark, fontSize: 12, fontWeight: '600', marginLeft: 4 },
   catTitle: { fontSize: 18, fontWeight: '700', color: colors.textPrimary, marginBottom: 10 },
   itemRow: { flexDirection: 'row', paddingVertical: 14, borderBottomWidth: 0.5, borderBottomColor: colors.borderSubtle, alignItems: 'center' },

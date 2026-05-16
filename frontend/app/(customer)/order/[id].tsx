@@ -4,35 +4,33 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { ArrowLeft, CheckCircle2 } from 'lucide-react-native';
 import { apiGet, apiPatch, apiPost } from '../../../src/api';
-import { colors, radius, space, STATUS_META } from '../../../src/theme';
+import { colors, radius, space, fmtINR } from '../../../src/theme';
 import { Button, StatusBadge } from '../../../src/components/UI';
+import { useI18n } from '../../../src/i18n';
+import { Penguin } from '../../../src/components/Mascot';
 
 const STEPS = ['pending', 'confirmed', 'preparing', 'ready', 'assigned', 'en_route', 'delivered'];
-const STEP_LABELS: Record<string, string> = {
-  pending: 'Placed', confirmed: 'Confirmed', preparing: 'Preparing',
-  ready: 'Ready', assigned: 'Rider assigned', en_route: 'On the way', delivered: 'Delivered',
-};
-
-const MESSAGES: Record<string, string> = {
-  pending: 'Waiting for the restaurant to confirm your order...',
-  confirmed: 'Great! The restaurant has confirmed your order.',
-  preparing: 'Your food is being freshly prepared.',
-  ready: 'Your food is ready and waiting for a rider.',
-  assigned: 'A rider has been assigned. They are heading to the restaurant.',
-  en_route: 'Your order is on the way!',
-  delivered: 'Order delivered. Enjoy your food!',
-  cancelled: 'This order was cancelled.',
-};
 
 export default function OrderTracking() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const router = useRouter();
+  const { t, tn } = useI18n();
   const [order, setOrder] = useState<any>(null);
   const [showReview, setShowReview] = useState(false);
   const [food, setFood] = useState(5);
   const [delivery, setDelivery] = useState(5);
   const [comment, setComment] = useState('');
   const pollRef = useRef<any>(null);
+
+  const STEP_LABELS: Record<string, string> = {
+    pending: t('order_placed'), confirmed: t('order_confirmed'), preparing: t('order_preparing'),
+    ready: t('order_ready'), assigned: t('order_assigned'), en_route: t('order_enroute'), delivered: t('order_delivered'),
+  };
+  const MESSAGES: Record<string, string> = {
+    pending: t('msg_pending'), confirmed: t('msg_confirmed'), preparing: t('msg_preparing'),
+    ready: t('msg_ready'), assigned: t('msg_assigned'), en_route: t('msg_enroute'), delivered: t('msg_delivered'),
+    cancelled: t('order_cancelled_msg'),
+  };
 
   const load = useCallback(async () => {
     try { const o = await apiGet(`/orders/${id}`); setOrder(o); } catch {}
@@ -45,9 +43,9 @@ export default function OrderTracking() {
   }, [load]);
 
   const cancel = async () => {
-    Alert.alert('Cancel order?', 'Are you sure?', [
-      { text: 'No' },
-      { text: 'Yes', style: 'destructive', onPress: async () => {
+    Alert.alert(t('cancel_order') + '?', '', [
+      { text: t('no') },
+      { text: t('yes'), style: 'destructive', onPress: async () => {
         try { await apiPatch(`/orders/${id}/status`, { status: 'cancelled' }); load(); } catch (e: any) { Alert.alert('Error', e.message); }
       }},
     ]);
@@ -56,14 +54,15 @@ export default function OrderTracking() {
   const submitReview = async () => {
     try {
       await apiPost('/reviews', { order_id: id, food_rating: food, delivery_rating: delivery, comment });
-      Alert.alert('Thank you!', 'Your review was submitted.');
+      Alert.alert('✓', '');
       setShowReview(false);
     } catch (e: any) { Alert.alert('Error', e.message); }
   };
 
-  if (!order) return <SafeAreaView style={{ flex: 1, backgroundColor: '#fff' }}><Text style={{ padding: 24 }}>Loading...</Text></SafeAreaView>;
+  if (!order) return <SafeAreaView style={{ flex: 1, backgroundColor: '#fff' }}><Text style={{ padding: 24 }}>{t('loading')}</Text></SafeAreaView>;
 
   const stepIdx = STEPS.indexOf(order.status);
+  const isDelivered = order.status === 'delivered';
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: '#fff' }}>
@@ -73,9 +72,14 @@ export default function OrderTracking() {
         <StatusBadge status={order.status} testID="order-status" />
       </View>
 
-      <ScrollView contentContainerStyle={{ padding: space.lg }}>
-        <Text style={{ fontSize: 22, fontWeight: '700' }}>{order.restaurant_name}</Text>
-        <Text style={{ color: colors.textMuted, fontSize: 13, marginTop: 4 }}>₹{order.total_gbp.toFixed(2)} · {order.items.length} item(s)</Text>
+      <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ padding: space.lg }}>
+        {(isDelivered || order.status === 'en_route') && (
+          <View style={{ alignItems: 'center', marginBottom: 14 }}>
+            <Penguin size={100} mood={isDelivered ? 'celebrate' : 'happy'} role="delivery" animated />
+          </View>
+        )}
+        <Text style={{ fontSize: 22, fontWeight: '700' }}>{tn(order.restaurant_name)}</Text>
+        <Text style={{ color: colors.textMuted, fontSize: 13, marginTop: 4 }}>{fmtINR(order.total_gbp)} · {order.items.length}</Text>
 
         {order.status !== 'cancelled' && (
           <View style={styles.progressBox}>
@@ -93,49 +97,49 @@ export default function OrderTracking() {
         <View style={styles.messageBox}>
           <Text style={{ fontSize: 15, fontWeight: '600', color: colors.textPrimary, lineHeight: 22 }}>{MESSAGES[order.status]}</Text>
           {order.rider_name && order.status === 'en_route' && (
-            <Text style={{ color: colors.brand, marginTop: 6, fontWeight: '600' }}>Rider: {order.rider_name}</Text>
+            <Text style={{ color: colors.brand, marginTop: 6, fontWeight: '600' }}>{t('rider_label')}: {order.rider_name}</Text>
           )}
         </View>
 
         {(order.status === 'assigned' || order.status === 'en_route') && (
           <View style={styles.mapBox}>
             <Image source={{ uri: 'https://images.unsplash.com/photo-1524661135-423995f22d0b?w=800' }} style={{ width: '100%', height: 180 }} />
-            <View style={styles.pinR}><Text style={{ color: '#fff', fontSize: 11, fontWeight: '700' }}>🍴 Restaurant</Text></View>
-            <View style={styles.pinC}><Text style={{ color: '#fff', fontSize: 11, fontWeight: '700' }}>🏠 You</Text></View>
+            <View style={styles.pinR}><Text style={{ color: '#fff', fontSize: 11, fontWeight: '700' }}>🍴</Text></View>
+            <View style={styles.pinC}><Text style={{ color: '#fff', fontSize: 11, fontWeight: '700' }}>🏠</Text></View>
           </View>
         )}
 
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Items</Text>
+          <Text style={styles.sectionTitle}>{t('items_label')}</Text>
           {order.items.map((it: any, i: number) => (
             <View key={i} style={styles.itemRow}>
-              <Text style={{ fontWeight: '500' }}>{it.quantity}× {it.name}</Text>
-              <Text style={{ color: colors.textMuted }}>₹{(it.price_gbp * it.quantity).toFixed(2)}</Text>
+              <Text style={{ fontWeight: '500' }}>{it.quantity}× {tn(it.name)}</Text>
+              <Text style={{ color: colors.textMuted }}>{fmtINR(it.price_gbp * it.quantity)}</Text>
             </View>
           ))}
           <View style={[styles.itemRow, { borderTopWidth: 0.5, borderColor: colors.borderSubtle, paddingTop: 10, marginTop: 6 }]}>
-            <Text style={{ fontWeight: '700' }}>Total</Text>
-            <Text style={{ fontWeight: '700', color: colors.brand }}>₹{order.total_gbp.toFixed(2)}</Text>
+            <Text style={{ fontWeight: '700' }}>{t('total')}</Text>
+            <Text style={{ fontWeight: '700', color: colors.brand }}>{fmtINR(order.total_gbp)}</Text>
           </View>
         </View>
 
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Delivery address</Text>
+          <Text style={styles.sectionTitle}>{t('delivery_address')}</Text>
           <Text style={{ color: colors.textMuted, fontSize: 14 }}>{order.delivery_address}</Text>
         </View>
 
         {['pending', 'confirmed', 'preparing'].includes(order.status) && (
-          <Button title="Cancel Order" variant="danger" onPress={cancel} testID="cancel-order-btn" style={{ marginTop: 14 }} />
+          <Button title={t('cancel_order')} variant="danger" onPress={cancel} testID="cancel-order-btn" style={{ marginTop: 14 }} />
         )}
 
-        {order.status === 'delivered' && !showReview && (
-          <Button title="Rate your order" onPress={() => setShowReview(true)} testID="rate-btn" style={{ marginTop: 14 }} />
+        {isDelivered && !showReview && (
+          <Button title={t('rate_order')} onPress={() => setShowReview(true)} testID="rate-btn" style={{ marginTop: 14 }} />
         )}
 
         {showReview && (
           <View style={styles.reviewBox}>
-            <Text style={styles.sectionTitle}>Rate your order</Text>
-            <Text style={{ color: colors.textMuted, marginTop: 6 }}>Food</Text>
+            <Text style={styles.sectionTitle}>{t('rate_order')}</Text>
+            <Text style={{ color: colors.textMuted, marginTop: 6 }}>{t('food_rating')}</Text>
             <View style={{ flexDirection: 'row', marginTop: 4 }}>
               {[1, 2, 3, 4, 5].map(n => (
                 <TouchableOpacity key={n} testID={`food-${n}`} onPress={() => setFood(n)}>
@@ -143,7 +147,7 @@ export default function OrderTracking() {
                 </TouchableOpacity>
               ))}
             </View>
-            <Text style={{ color: colors.textMuted, marginTop: 10 }}>Delivery</Text>
+            <Text style={{ color: colors.textMuted, marginTop: 10 }}>{t('delivery_rating')}</Text>
             <View style={{ flexDirection: 'row', marginTop: 4 }}>
               {[1, 2, 3, 4, 5].map(n => (
                 <TouchableOpacity key={n} testID={`delivery-${n}`} onPress={() => setDelivery(n)}>
@@ -152,9 +156,9 @@ export default function OrderTracking() {
               ))}
             </View>
             <View style={{ borderWidth: 1, borderColor: colors.borderSubtle, borderRadius: radius.md, padding: 10, marginTop: 12 }}>
-              <TextInput testID="review-comment" value={comment} onChangeText={setComment} placeholder="Optional comment" placeholderTextColor={colors.textHint} multiline />
+              <TextInput testID="review-comment" value={comment} onChangeText={setComment} placeholder={t('optional_comment')} placeholderTextColor={colors.textHint} multiline />
             </View>
-            <Button title="Submit review" onPress={submitReview} testID="submit-review" style={{ marginTop: 14 }} />
+            <Button title={t('submit_review')} onPress={submitReview} testID="submit-review" style={{ marginTop: 14 }} />
           </View>
         )}
       </ScrollView>

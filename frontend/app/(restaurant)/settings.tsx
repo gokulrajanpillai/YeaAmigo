@@ -11,7 +11,7 @@ export default function RestSettings() {
   const router = useRouter();
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: '#fff' }} edges={['top']}>
-      <ScrollView contentContainerStyle={{ padding: space.lg }}>
+      <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ padding: space.lg }}>
         <Text style={{ fontSize: 22, fontWeight: '700' }}>Settings</Text>
         <Card style={{ marginTop: 16 }}>
           <Text style={{ color: colors.textMuted }}>Owner</Text>

@@ -29,7 +29,7 @@ export default function Profile() {
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: colors.bgSurface }} edges={['top']}>
-      <ScrollView contentContainerStyle={{ padding: space.lg, paddingBottom: 32 }}>
+      <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ padding: space.lg, paddingBottom: 32 }}>
         <View style={styles.header}>
           <Penguin size={72} mood="happy" />
           <Text style={styles.name}>{user?.full_name}</Text>

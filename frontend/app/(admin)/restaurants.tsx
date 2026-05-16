@@ -17,7 +17,7 @@ export default function AdminRestaurants() {
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: '#fff' }} edges={['top']}>
       <View style={{ padding: space.lg }}><Text style={{ fontSize: 22, fontWeight: '700' }}>Restaurants</Text></View>
-      <ScrollView contentContainerStyle={{ padding: space.lg }}>
+      <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ padding: space.lg }}>
         {items.map(r => (
           <Card key={r.id} style={{ marginBottom: 10 }}>
             <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>

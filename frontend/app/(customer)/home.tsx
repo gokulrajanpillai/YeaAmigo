@@ -2,18 +2,20 @@ import React, { useEffect, useState, useCallback } from 'react';
 import { View, Text, ScrollView, TouchableOpacity, Image, StyleSheet, RefreshControl, FlatList } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter, useFocusEffect } from 'expo-router';
-import { MapPin, Star, Search, Clock } from 'lucide-react-native';
+import { MapPin, Star, Search, Clock, ChevronDown } from 'lucide-react-native';
 import { apiGet } from '../../src/api';
 import { colors, radius, space, shadow } from '../../src/theme';
-import { Chip, Skeleton } from '../../src/components/UI';
+import { Chip, Skeleton, EmptyState, Button } from '../../src/components/UI';
 import { useI18n } from '../../src/i18n';
+import { useAddress, shortAddress } from '../../src/address';
 import { Penguin } from '../../src/components/Mascot';
 
 const CUISINES = ['All', 'Pizza', 'Italian', 'Indian', 'Vegan', 'Chinese', 'Burgers', 'Thai'];
 
 export default function CustomerHome() {
   const router = useRouter();
-  const { t } = useI18n();
+  const { t, tn } = useI18n();
+  const { active } = useAddress();
   const [data, setData] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState('All');
@@ -33,17 +35,24 @@ export default function CustomerHome() {
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: '#fff' }} edges={['top']}>
       <ScrollView
+        showsVerticalScrollIndicator={false}
         refreshControl={<RefreshControl refreshing={refreshing} onRefresh={() => { setRefreshing(true); load(); }} tintColor={colors.brand} />}
         contentContainerStyle={{ paddingBottom: 24 }}>
         <View style={{ paddingHorizontal: space.lg, paddingTop: space.sm }}>
           <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
-            <View>
+            <TouchableOpacity
+              testID="open-address"
+              onPress={() => router.push('/(customer)/address' as any)}
+              style={{ flex: 1 }}>
               <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 4 }}>
                 <MapPin size={16} color={colors.brand} />
                 <Text style={{ marginLeft: 4, color: colors.textMuted, fontSize: 12 }}>{t('delivering_to')}</Text>
+                <ChevronDown size={14} color={colors.textMuted} style={{ marginLeft: 4 }} />
               </View>
-              <Text style={{ fontSize: 16, fontWeight: '700', color: colors.textPrimary }}>Bengaluru 560001</Text>
-            </View>
+              <Text numberOfLines={1} style={{ fontSize: 15, fontWeight: '700', color: colors.textPrimary }}>
+                {active.title} · {shortAddress(active)}
+              </Text>
+            </TouchableOpacity>
             <Penguin size={48} mood="happy" />
           </View>
 
@@ -53,7 +62,7 @@ export default function CustomerHome() {
           </View>
 
           <Text style={{ fontSize: 24, fontWeight: '800', marginTop: space.lg, color: colors.textPrimary }}>
-            Good food, <Text style={{ color: colors.brand }}>great amigos.</Text>
+            {t('hero_line1')} <Text style={{ color: colors.brand }}>{t('hero_line2')}</Text>
           </Text>
           <Text style={{ color: colors.textMuted, fontSize: 13, marginTop: 4 }}>
             {data.length} {t('restaurants_near')}
@@ -62,7 +71,7 @@ export default function CustomerHome() {
 
         <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ paddingHorizontal: space.lg, paddingVertical: space.lg }}>
           {CUISINES.map(c => (
-            <Chip key={c} label={c} active={filter === c} onPress={() => setFilter(c)} testID={`chip-${c}`} />
+            <Chip key={c} label={tn(c)} active={filter === c} onPress={() => setFilter(c)} testID={`chip-${c}`} />
           ))}
         </ScrollView>
 
@@ -76,11 +85,20 @@ export default function CustomerHome() {
               </View>
             ))}
           </View>
+        ) : filtered.length === 0 ? (
+          <EmptyState
+            icon={<Penguin size={120} mood="searching" role="customer" animated />}
+            title={t('loading')}
+            subtitle={t('search_placeholder')}
+            action={<Button title={t('browse_restaurants')} onPress={() => setFilter('All')} />}
+          />
         ) : (
-          <FlatList
+          <FlatList showsVerticalScrollIndicator={false}
             data={filtered}
             keyExtractor={(it) => it.id}
             scrollEnabled={false}
+            showsVerticalScrollIndicator={false}
+            showsHorizontalScrollIndicator={false}
             contentContainerStyle={{ paddingHorizontal: space.lg }}
             renderItem={({ item }) => (
               <TouchableOpacity
@@ -95,20 +113,20 @@ export default function CustomerHome() {
                 )}
                 <Image source={{ uri: item.logo_url }} style={styles.logo} />
                 <View style={{ padding: space.lg }}>
-                  <Text style={styles.restName}>{item.name}</Text>
+                  <Text style={styles.restName}>{tn(item.name)}</Text>
                   <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 4 }}>
-                    <Star size={14} color={colors.amber} fill={colors.amber} />
+                    <Star size={14} color={colors.accent} fill={colors.accent} />
                     <Text style={{ marginLeft: 4, fontSize: 13, color: colors.textPrimary, fontWeight: '600' }}>
                       {item.rating?.toFixed(1) || '—'}
                     </Text>
                     <Text style={{ marginLeft: 4, fontSize: 12, color: colors.textMuted }}>
-                      · {(item.cuisine_tags || []).slice(0, 2).join(' · ')}
+                      · {(item.cuisine_tags || []).slice(0, 2).map((c: string) => tn(c)).join(' · ')}
                     </Text>
                   </View>
                   <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 6 }}>
                     <Clock size={14} color={colors.textMuted} />
                     <Text style={{ marginLeft: 4, fontSize: 12, color: colors.textMuted }}>
-                      {item.avg_prep_mins}–{item.avg_prep_mins + 15} min · ₹49 delivery
+                      {item.avg_prep_mins}–{item.avg_prep_mins + 15} {t('min_word')} · ₹49 {t('delivery_fee_short')}
                     </Text>
                   </View>
                 </View>

@@ -20,7 +20,7 @@ export default function AdminDashboard() {
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: '#fff' }} edges={['top']}>
-      <ScrollView refreshControl={<RefreshControl refreshing={refreshing} onRefresh={() => { setRefreshing(true); load(); }} />} contentContainerStyle={{ padding: space.lg }}>
+      <ScrollView showsVerticalScrollIndicator={false} refreshControl={<RefreshControl refreshing={refreshing} onRefresh={() => { setRefreshing(true); load(); }} />} contentContainerStyle={{ padding: space.lg }}>
         <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
           <View><Text style={{ fontSize: 22, fontWeight: '700' }}>Platform Overview</Text><Text style={{ color: colors.textMuted, fontSize: 13 }}>YeaAmigo admin</Text></View>
           <TouchableOpacity testID="admin-logout" onPress={async () => { await logout(); router.replace('/(auth)/login'); }}><Text style={{ color: colors.brand, fontWeight: '600' }}>Sign out</Text></TouchableOpacity>

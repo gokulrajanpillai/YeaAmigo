@@ -31,7 +31,7 @@ export default function MenuBuilder() {
         <Text style={{ fontSize: 22, fontWeight: '700' }}>Menu Builder</Text>
         <Text style={{ color: colors.textMuted, fontSize: 13, marginTop: 2 }}>Toggle item availability</Text>
       </View>
-      <ScrollView contentContainerStyle={{ padding: space.lg }}>
+      <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ padding: space.lg }}>
         {menu.map(group => (
           <View key={group.category} style={{ marginBottom: 22 }}>
             <Text style={{ fontSize: 16, fontWeight: '700', marginBottom: 10 }}>{group.category}</Text>

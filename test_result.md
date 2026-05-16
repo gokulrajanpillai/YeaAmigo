@@ -101,3 +101,105 @@
 #====================================================================================================
 # Testing Data - Main Agent and testing sub agent both should log testing data below this section
 #====================================================================================================
+
+user_problem_statement: "Update YeaAmigo app: fix Sign Out, hide scrollbars, polish mascot/tagline, map-based address selection (OpenStreetMap), expand i18n coverage to dish names/descriptions across 7 languages."
+
+frontend:
+  - task: "Fix Sign Out & global AuthGuard"
+    implemented: true
+    working: true
+    file: "app/_layout.tsx, src/auth.tsx"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+        - working: true
+          agent: "main"
+          comment: "Added global AuthGuard in root layout that watches segments + auth state and replaces to /(auth)/login when user becomes null inside protected groups. logout() now also clears cart + uses setToken(null) first for atomic gate."
+  - task: "Hide scrollbars globally"
+    implemented: true
+    working: true
+    file: "all app/**/*.tsx + app/_layout.tsx web CSS"
+    stuck_count: 0
+    priority: "medium"
+    needs_retesting: false
+    status_history:
+        - working: true
+          agent: "main"
+          comment: "Added showsVerticalScrollIndicator={false} and showsHorizontalScrollIndicator={false} to every ScrollView and FlatList via script. Also injected global CSS (::-webkit-scrollbar display:none) on web preview."
+  - task: "Map-based Address Selection (OpenStreetMap + Leaflet, no API key)"
+    implemented: true
+    working: true
+    file: "app/(customer)/address.tsx, src/address.tsx"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+        - working: true
+          agent: "main"
+          comment: "New AddressContext stores saved addresses + active selection in AsyncStorage. New address picker screen with list, OSM Leaflet map (WebView/iframe), draggable pin via center crosshair, Nominatim forward+reverse geocode, current-location via geolocation API, Home/Work/Other labels, manual form fallback. Wired to home header + cart."
+  - task: "i18n dynamic content translation (dish names, descriptions, cuisine tags)"
+    implemented: true
+    working: true
+    file: "src/i18n.tsx, all customer screens"
+    stuck_count: 0
+    priority: "medium"
+    needs_retesting: false
+    status_history:
+        - working: true
+          agent: "main"
+          comment: "Added tn() lookup of dish names, descriptions, cuisine tags, categories, dietary tags across 7 languages (en/hi/ta/ml/kn/mr/bn). Wired tn() throughout home/cart/restaurant/orders/order-tracking. Verified visually: switched to Hindi and dish names/descriptions render in Devanagari."
+  - task: "Mascot & tagline polish"
+    implemented: true
+    working: true
+    file: "src/components/Mascot.tsx (existing - rich), used in empty/loading/success states"
+    stuck_count: 0
+    priority: "medium"
+    needs_retesting: false
+    status_history:
+        - working: true
+          agent: "main"
+          comment: "Penguin mascot used across login, profile, empty cart (hungry), empty orders (waiting), support (sorry), order tracking (celebrate on delivered), home, address picker (searching). Tagline 'Food delivery made easy' applied via t('tagline') with translations."
+  - task: "Tab bar label visibility"
+    implemented: true
+    working: true
+    file: "app/(*)/_layout.tsx"
+    stuck_count: 0
+    priority: "low"
+    needs_retesting: false
+    status_history:
+        - working: true
+          agent: "main"
+          comment: "Bumped tab bar height to 64+bottomPad, label margin, tabBarShowLabel: true, fontSize 11 to fit comfortably."
+
+backend:
+  - task: "No backend changes this iteration"
+    implemented: true
+    working: true
+    file: "backend/server.py"
+    stuck_count: 0
+    priority: "low"
+    needs_retesting: false
+    status_history:
+        - working: true
+          agent: "main"
+          comment: "MongoDB + FastAPI kept as-is. INR pricing, seeded data, JWT auth all confirmed working via UI smoke (login -> home -> restaurant -> address picker)."
+
+metadata:
+  created_by: "main_agent"
+  version: "2.0"
+  test_sequence: 0
+  run_ui: false
+
+test_plan:
+  current_focus:
+    - "Map-based Address Selection (OpenStreetMap + Leaflet, no API key)"
+    - "Fix Sign Out & global AuthGuard"
+    - "i18n dynamic content translation"
+  stuck_tasks: []
+  test_all: false
+  test_priority: "high_first"
+
+agent_communication:
+    - agent: "main"
+      message: "Completed: Sign Out fix (global AuthGuard), hidden scrollbars globally (per-component + web CSS), map-based address picker (OSM Leaflet via WebView/iframe — no API key, Nominatim search & reverse-geocode, draggable pin), i18n expansion (7 languages cover static UI + dynamic dish names/descriptions/categories/cuisine tags/dietary tags), penguin mascot polish (used across empty/loading/success). Verified: login, home (Bengaluru, MG Road address header), restaurant detail (Hindi translated), address picker (OSM map renders with pin, reverse-geocode auto-fills). Backend untouched — no retest needed."
