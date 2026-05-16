@@ -1,30 +1,33 @@
-import { Text, View, StyleSheet, Image } from "react-native";
+import React, { useEffect } from 'react';
+import { View, Text, ActivityIndicator, StyleSheet } from 'react-native';
+import { useRouter } from 'expo-router';
+import { useAuth } from '../src/auth';
+import { colors } from '../src/theme';
 
-const EXPO_PUBLIC_BACKEND_URL = process.env.EXPO_PUBLIC_BACKEND_URL;
+export default function Splash() {
+  const { user, loading } = useAuth();
+  const router = useRouter();
 
-export default function Index() {
-  console.log(EXPO_PUBLIC_BACKEND_URL, "EXPO_PUBLIC_BACKEND_URL");
+  useEffect(() => {
+    if (loading) return;
+    if (!user) router.replace('/(auth)/login');
+    else if (user.role === 'customer') router.replace('/(customer)/home');
+    else if (user.role === 'restaurant_owner') router.replace('/(restaurant)/dashboard');
+    else if (user.role === 'rider') router.replace('/(rider)/home');
+    else if (user.role === 'admin') router.replace('/(admin)/dashboard');
+  }, [user, loading, router]);
 
   return (
-    <View style={styles.container}>
-      <Image
-        source={require("../assets/images/app-image.png")}
-        style={styles.image}
-      />
+    <View style={styles.c} testID="splash-screen">
+      <Text style={styles.brand}>Yeamigo</Text>
+      <Text style={styles.tag}>Good food, great amigos.</Text>
+      <ActivityIndicator color={colors.brand} style={{ marginTop: 24 }} />
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#0c0c0c",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  image: {
-    width: "100%",
-    height: "100%",
-    resizeMode: "contain",
-  },
+  c: { flex: 1, alignItems: 'center', justifyContent: 'center', backgroundColor: '#fff' },
+  brand: { fontSize: 40, fontWeight: '800', color: colors.brand, letterSpacing: -1 },
+  tag: { fontSize: 14, color: colors.textMuted, marginTop: 6 },
 });
