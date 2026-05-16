@@ -41,7 +41,7 @@ export default function MenuBuilder() {
                 <View style={{ flex: 1, marginLeft: 12 }}>
                   <Text style={{ fontSize: 14, fontWeight: '600' }}>{it.name}</Text>
                   <Text style={{ color: colors.textMuted, fontSize: 12, marginTop: 2 }} numberOfLines={1}>{it.description}</Text>
-                  <Text style={{ color: colors.brand, fontWeight: '700', marginTop: 4 }}>£{it.price_gbp.toFixed(2)}</Text>
+                  <Text style={{ color: colors.brand, fontWeight: '700', marginTop: 4 }}>₹{it.price_gbp.toFixed(2)}</Text>
                 </View>
                 <Switch
                   testID={`toggle-${it.id}`}

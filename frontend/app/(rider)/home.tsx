@@ -1,7 +1,7 @@
 import React, { useState, useCallback } from 'react';
 import { View, Text, ScrollView, TouchableOpacity, StyleSheet, Alert, RefreshControl } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useFocusEffect } from 'expo-router';
+import { useFocusEffect, useRouter } from 'expo-router';
 import { Bike, Zap, MapPin } from 'lucide-react-native';
 import { apiGet, apiPatch, apiPost } from '../../src/api';
 import { colors, radius, space, shadow } from '../../src/theme';
@@ -10,6 +10,7 @@ import { useAuth } from '../../src/auth';
 
 export default function RiderHome() {
   const { user, logout } = useAuth();
+  const router = useRouter();
   const [online, setOnline] = useState(false);
   const [available, setAvailable] = useState<any[]>([]);
   const [active, setActive] = useState<any[]>([]);
@@ -56,7 +57,7 @@ export default function RiderHome() {
             <Text style={{ color: colors.textMuted, fontSize: 13 }}>Hello,</Text>
             <Text style={{ fontSize: 22, fontWeight: '700' }}>{user?.full_name?.split(' ')[0]}</Text>
           </View>
-          <TouchableOpacity onPress={async () => { await logout(); }}><Text style={{ color: colors.brand, fontWeight: '600' }}>Sign out</Text></TouchableOpacity>
+          <TouchableOpacity onPress={async () => { await logout(); router.replace('/(auth)/login'); }} testID="rider-logout-home"><Text style={{ color: colors.brand, fontWeight: '600' }}>Sign out</Text></TouchableOpacity>
         </View>
 
         <TouchableOpacity testID="online-toggle" onPress={toggle} style={[styles.bigToggle, { backgroundColor: online ? colors.success : colors.brand }]}>
@@ -68,7 +69,7 @@ export default function RiderHome() {
 
         <View style={{ flexDirection: 'row', marginTop: 18 }}>
           <Stat label="Deliveries today" value={todayCount.toString()} />
-          <Stat label="Earnings" value={`£${(todayCount * 1.99).toFixed(2)}`} highlight />
+          <Stat label="Earnings" value={`₹${(todayCount * 1.99).toFixed(2)}`} highlight />
         </View>
 
         {active.length > 0 && (
@@ -101,7 +102,7 @@ export default function RiderHome() {
               <Card key={o.id} style={{ marginBottom: 10, borderColor: colors.brand, borderWidth: 1 }}>
                 <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
                   <Text style={{ fontWeight: '700' }}>{o.order_ref}</Text>
-                  <Text style={{ color: colors.brand, fontWeight: '700' }}>~£{o.delivery_fee.toFixed(2)}</Text>
+                  <Text style={{ color: colors.brand, fontWeight: '700' }}>~₹{o.delivery_fee.toFixed(2)}</Text>
                 </View>
                 <Text style={{ marginTop: 6, fontWeight: '600' }}>{o.restaurant_name}</Text>
                 <Text style={{ color: colors.textMuted, fontSize: 13, marginTop: 4 }}>→ {o.delivery_address}</Text>

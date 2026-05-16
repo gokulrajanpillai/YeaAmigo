@@ -39,7 +39,7 @@ export default function RestaurantOrders() {
                   <Text style={{ fontFamily: 'Courier New', fontSize: 12, fontWeight: '700' }}>{o.order_ref}</Text>
                   <Text style={{ marginTop: 6, fontSize: 13 }}>{o.items.map((i: any) => `${i.quantity}× ${i.name}`).join(', ')}</Text>
                   <View style={{ marginTop: 8 }}><StatusBadge status={o.status} /></View>
-                  <Text style={{ color: colors.brand, fontWeight: '700', marginTop: 8 }}>£{o.total_gbp.toFixed(2)}</Text>
+                  <Text style={{ color: colors.brand, fontWeight: '700', marginTop: 8 }}>₹{o.total_gbp.toFixed(2)}</Text>
                 </Card>
               ))}
             </View>

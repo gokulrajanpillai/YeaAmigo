@@ -21,7 +21,7 @@ export default function AdminOrders() {
             </View>
             <Text style={{ marginTop: 6 }}>{o.restaurant_name}</Text>
             <Text style={{ color: colors.textMuted, fontSize: 12, marginTop: 2 }}>Customer: {o.customer_name}</Text>
-            <Text style={{ color: colors.brand, fontWeight: '700', marginTop: 6 }}>£{o.total_gbp.toFixed(2)}</Text>
+            <Text style={{ color: colors.brand, fontWeight: '700', marginTop: 6 }}>₹{o.total_gbp.toFixed(2)}</Text>
           </Card>
         ))}
       </ScrollView>

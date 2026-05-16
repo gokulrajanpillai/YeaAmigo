@@ -1,7 +1,7 @@
 import React, { useState, useCallback } from 'react';
 import { View, Text, ScrollView, TouchableOpacity, StyleSheet, Alert, RefreshControl } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useFocusEffect } from 'expo-router';
+import { useFocusEffect, useRouter } from 'expo-router';
 import { apiGet, apiPatch } from '../../src/api';
 import { colors, radius, space } from '../../src/theme';
 import { Button, StatusBadge, Card } from '../../src/components/UI';
@@ -9,6 +9,7 @@ import { useAuth } from '../../src/auth';
 
 export default function RestaurantDashboard() {
   const { user, logout } = useAuth();
+  const router = useRouter();
   const [restaurant, setRestaurant] = useState<any>(null);
   const [orders, setOrders] = useState<any[]>([]);
   const [refreshing, setRefreshing] = useState(false);
@@ -50,7 +51,7 @@ export default function RestaurantDashboard() {
             <Text style={{ color: colors.textMuted, fontSize: 13 }}>Welcome back</Text>
             <Text style={{ fontSize: 22, fontWeight: '700' }}>{restaurant?.name || 'Restaurant'}</Text>
           </View>
-          <TouchableOpacity testID="logout-restaurant" onPress={async () => { await logout(); }}>
+          <TouchableOpacity testID="logout-restaurant" onPress={async () => { await logout(); router.replace('/(auth)/login'); }}>
             <Text style={{ color: colors.brand, fontWeight: '600' }}>Sign out</Text>
           </TouchableOpacity>
         </View>
@@ -93,7 +94,7 @@ export default function RestaurantDashboard() {
             </View>
             <Text style={{ marginTop: 6, color: colors.textMuted, fontSize: 12 }}>{o.customer_name?.split(' ')[0]} · {new Date(o.created_at).toLocaleTimeString()}</Text>
             <Text style={{ marginTop: 8 }}>{o.items.map((i: any) => `${i.quantity}× ${i.name}`).join(', ')}</Text>
-            <Text style={{ fontWeight: '700', color: colors.brand, marginTop: 8 }}>£{o.total_gbp.toFixed(2)}</Text>
+            <Text style={{ fontWeight: '700', color: colors.brand, marginTop: 8 }}>₹{o.total_gbp.toFixed(2)}</Text>
 
             <View style={{ flexDirection: 'row', marginTop: 12, gap: 8 } as any}>
               {o.status === 'pending' && (

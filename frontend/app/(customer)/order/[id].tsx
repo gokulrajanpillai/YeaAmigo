@@ -75,7 +75,7 @@ export default function OrderTracking() {
 
       <ScrollView contentContainerStyle={{ padding: space.lg }}>
         <Text style={{ fontSize: 22, fontWeight: '700' }}>{order.restaurant_name}</Text>
-        <Text style={{ color: colors.textMuted, fontSize: 13, marginTop: 4 }}>£{order.total_gbp.toFixed(2)} · {order.items.length} item(s)</Text>
+        <Text style={{ color: colors.textMuted, fontSize: 13, marginTop: 4 }}>₹{order.total_gbp.toFixed(2)} · {order.items.length} item(s)</Text>
 
         {order.status !== 'cancelled' && (
           <View style={styles.progressBox}>
@@ -110,12 +110,12 @@ export default function OrderTracking() {
           {order.items.map((it: any, i: number) => (
             <View key={i} style={styles.itemRow}>
               <Text style={{ fontWeight: '500' }}>{it.quantity}× {it.name}</Text>
-              <Text style={{ color: colors.textMuted }}>£{(it.price_gbp * it.quantity).toFixed(2)}</Text>
+              <Text style={{ color: colors.textMuted }}>₹{(it.price_gbp * it.quantity).toFixed(2)}</Text>
             </View>
           ))}
           <View style={[styles.itemRow, { borderTopWidth: 0.5, borderColor: colors.borderSubtle, paddingTop: 10, marginTop: 6 }]}>
             <Text style={{ fontWeight: '700' }}>Total</Text>
-            <Text style={{ fontWeight: '700', color: colors.brand }}>£{order.total_gbp.toFixed(2)}</Text>
+            <Text style={{ fontWeight: '700', color: colors.brand }}>₹{order.total_gbp.toFixed(2)}</Text>
           </View>
         </View>
 

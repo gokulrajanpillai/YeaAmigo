@@ -6,11 +6,14 @@ import { MapPin, Star, Search, Clock } from 'lucide-react-native';
 import { apiGet } from '../../src/api';
 import { colors, radius, space, shadow } from '../../src/theme';
 import { Chip, Skeleton } from '../../src/components/UI';
+import { useI18n } from '../../src/i18n';
+import { Penguin } from '../../src/components/Mascot';
 
 const CUISINES = ['All', 'Pizza', 'Italian', 'Indian', 'Vegan', 'Chinese', 'Burgers', 'Thai'];
 
 export default function CustomerHome() {
   const router = useRouter();
+  const { t } = useI18n();
   const [data, setData] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState('All');
@@ -33,22 +36,27 @@ export default function CustomerHome() {
         refreshControl={<RefreshControl refreshing={refreshing} onRefresh={() => { setRefreshing(true); load(); }} tintColor={colors.brand} />}
         contentContainerStyle={{ paddingBottom: 24 }}>
         <View style={{ paddingHorizontal: space.lg, paddingTop: space.sm }}>
-          <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 4 }}>
-            <MapPin size={16} color={colors.brand} />
-            <Text style={{ marginLeft: 4, color: colors.textMuted, fontSize: 12 }}>Delivering to</Text>
+          <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+            <View>
+              <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 4 }}>
+                <MapPin size={16} color={colors.brand} />
+                <Text style={{ marginLeft: 4, color: colors.textMuted, fontSize: 12 }}>{t('delivering_to')}</Text>
+              </View>
+              <Text style={{ fontSize: 16, fontWeight: '700', color: colors.textPrimary }}>Bengaluru 560001</Text>
+            </View>
+            <Penguin size={48} mood="happy" />
           </View>
-          <Text style={{ fontSize: 16, fontWeight: '600', color: colors.textPrimary }}>London E1 6RF</Text>
 
           <View style={styles.searchBar}>
             <Search size={18} color={colors.textHint} />
-            <Text style={{ marginLeft: 10, color: colors.textHint, fontSize: 14 }}>Search restaurants or dishes...</Text>
+            <Text style={{ marginLeft: 10, color: colors.textHint, fontSize: 14 }}>{t('search_placeholder')}</Text>
           </View>
 
-          <Text style={{ fontSize: 22, fontWeight: '700', marginTop: space.lg }}>
+          <Text style={{ fontSize: 24, fontWeight: '800', marginTop: space.lg, color: colors.textPrimary }}>
             Good food, <Text style={{ color: colors.brand }}>great amigos.</Text>
           </Text>
           <Text style={{ color: colors.textMuted, fontSize: 13, marginTop: 4 }}>
-            {data.length} restaurants near you
+            {data.length} {t('restaurants_near')}
           </Text>
         </View>
 
@@ -82,7 +90,7 @@ export default function CustomerHome() {
                 <Image source={{ uri: item.banner_url }} style={styles.banner} />
                 {!item.is_open && (
                   <View style={styles.closedOverlay}>
-                    <Text style={{ color: '#fff', fontWeight: '700' }}>Currently closed</Text>
+                    <Text style={{ color: '#fff', fontWeight: '700' }}>{t('closed_label')}</Text>
                   </View>
                 )}
                 <Image source={{ uri: item.logo_url }} style={styles.logo} />
@@ -100,7 +108,7 @@ export default function CustomerHome() {
                   <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 6 }}>
                     <Clock size={14} color={colors.textMuted} />
                     <Text style={{ marginLeft: 4, fontSize: 12, color: colors.textMuted }}>
-                      {item.avg_prep_mins}–{item.avg_prep_mins + 15} min · £1.99 delivery
+                      {item.avg_prep_mins}–{item.avg_prep_mins + 15} min · ₹49 delivery
                     </Text>
                   </View>
                 </View>

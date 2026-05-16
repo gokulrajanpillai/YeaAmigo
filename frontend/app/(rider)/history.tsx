@@ -23,7 +23,7 @@ export default function RiderHistory() {
       <View style={{ padding: space.lg }}>
         <Text style={{ fontSize: 22, fontWeight: '700' }}>Delivery History</Text>
         <View style={styles.summary}>
-          <View><Text style={{ color: colors.textMuted, fontSize: 12 }}>Total earnings</Text><Text style={{ fontSize: 24, fontWeight: '800', color: colors.brand }}>£{total.toFixed(2)}</Text></View>
+          <View><Text style={{ color: colors.textMuted, fontSize: 12 }}>Total earnings</Text><Text style={{ fontSize: 24, fontWeight: '800', color: colors.brand }}>₹{total.toFixed(2)}</Text></View>
           <View><Text style={{ color: colors.textMuted, fontSize: 12 }}>Deliveries</Text><Text style={{ fontSize: 24, fontWeight: '800' }}>{orders.length}</Text></View>
         </View>
       </View>
@@ -38,7 +38,7 @@ export default function RiderHistory() {
             </View>
             <Text style={{ marginTop: 6 }}>{o.restaurant_name}</Text>
             <Text style={{ color: colors.textMuted, fontSize: 13, marginTop: 4 }}>{new Date(o.created_at).toLocaleString()}</Text>
-            <Text style={{ color: colors.brand, fontWeight: '700', marginTop: 6 }}>+£{o.delivery_fee.toFixed(2)}</Text>
+            <Text style={{ color: colors.brand, fontWeight: '700', marginTop: 6 }}>+₹{o.delivery_fee.toFixed(2)}</Text>
           </Card>
         ))}
       </ScrollView>

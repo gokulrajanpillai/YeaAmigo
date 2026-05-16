@@ -26,7 +26,7 @@ export default function RestSettings() {
         <Card style={{ marginTop: 14 }}>
           <Text style={{ fontWeight: '600' }}>Order Settings</Text>
           <Text style={{ color: colors.textMuted, fontSize: 13, marginTop: 6 }}>Default prep time: 20 min</Text>
-          <Text style={{ color: colors.textMuted, fontSize: 13 }}>Min order: £10.00</Text>
+          <Text style={{ color: colors.textMuted, fontSize: 13 }}>Min order: ₹10.00</Text>
         </Card>
         <View style={{ marginTop: 18 }}>
           <Button title="Sign out" variant="secondary" onPress={async () => { await logout(); router.replace('/(auth)/login' as any); }} testID="rest-logout" />

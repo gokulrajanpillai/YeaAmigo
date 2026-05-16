@@ -1,7 +1,7 @@
 import React, { useState, useCallback } from 'react';
 import { View, Text, ScrollView, StyleSheet, RefreshControl, TouchableOpacity } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useFocusEffect } from 'expo-router';
+import { useFocusEffect, useRouter } from 'expo-router';
 import { apiGet } from '../../src/api';
 import { colors, radius, space } from '../../src/theme';
 import { Card } from '../../src/components/UI';
@@ -9,6 +9,7 @@ import { useAuth } from '../../src/auth';
 
 export default function AdminDashboard() {
   const { logout } = useAuth();
+  const router = useRouter();
   const [data, setData] = useState<any>(null);
   const [refreshing, setRefreshing] = useState(false);
 
@@ -21,12 +22,12 @@ export default function AdminDashboard() {
     <SafeAreaView style={{ flex: 1, backgroundColor: '#fff' }} edges={['top']}>
       <ScrollView refreshControl={<RefreshControl refreshing={refreshing} onRefresh={() => { setRefreshing(true); load(); }} />} contentContainerStyle={{ padding: space.lg }}>
         <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-          <View><Text style={{ fontSize: 22, fontWeight: '700' }}>Platform Overview</Text><Text style={{ color: colors.textMuted, fontSize: 13 }}>Yeamigo admin</Text></View>
-          <TouchableOpacity onPress={logout}><Text style={{ color: colors.brand, fontWeight: '600' }}>Sign out</Text></TouchableOpacity>
+          <View><Text style={{ fontSize: 22, fontWeight: '700' }}>Platform Overview</Text><Text style={{ color: colors.textMuted, fontSize: 13 }}>YeaAmigo admin</Text></View>
+          <TouchableOpacity testID="admin-logout" onPress={async () => { await logout(); router.replace('/(auth)/login'); }}><Text style={{ color: colors.brand, fontWeight: '600' }}>Sign out</Text></TouchableOpacity>
         </View>
 
         <View style={styles.grid}>
-          <Metric label="Revenue (delivered)" value={`£${(data?.revenue_gbp || 0).toFixed(2)}`} accent />
+          <Metric label="Revenue (delivered)" value={`₹${(data?.revenue_gbp || 0).toFixed(2)}`} accent />
           <Metric label="Total orders" value={data?.total_orders?.toString() || '0'} />
           <Metric label="Active orders" value={data?.active_orders?.toString() || '0'} />
           <Metric label="Delivered" value={data?.delivered_orders?.toString() || '0'} />

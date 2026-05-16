@@ -384,7 +384,7 @@ async def place_order(req: PlaceOrderReq, user=Depends(require_role("customer"))
         raise HTTPException(400, "Restaurant is closed")
 
     subtotal = sum(it.price_gbp * it.quantity for it in req.items)
-    delivery_fee = 1.99
+    delivery_fee = 49.0
     total = round(subtotal + delivery_fee, 2)
     oid = str(uuid.uuid4())
     order = {
@@ -668,11 +668,11 @@ async def seed():
 
     # Users
     users_data = [
-        ("admin@yeamigo.app", "Admin User", "admin"),
-        ("customer@yeamigo.app", "Sofia Hernandez", "customer"),
-        ("rider@yeamigo.app", "Marco Diaz", "rider"),
-        ("owner1@yeamigo.app", "Luca Rossi", "restaurant_owner"),
-        ("owner2@yeamigo.app", "Priya Sharma", "restaurant_owner"),
+        ("admin@yeaamigo.app", "Admin User", "admin"),
+        ("customer@yeaamigo.app", "Sofia Hernandez", "customer"),
+        ("rider@yeaamigo.app", "Marco Diaz", "rider"),
+        ("owner1@yeaamigo.app", "Luca Rossi", "restaurant_owner"),
+        ("owner2@yeaamigo.app", "Priya Sharma", "restaurant_owner"),
     ]
     ids = {}
     for email, name, role in users_data:
@@ -681,7 +681,7 @@ async def seed():
         await db.users.insert_one({
             "id": uid,
             "email": email,
-            "password_hash": hash_pw("Yeamigo2026!"),
+            "password_hash": hash_pw("YeaAmigo2026!"),
             "full_name": name,
             "role": role,
             "phone": "+447700900000",
@@ -692,7 +692,7 @@ async def seed():
     # Rider location
     await db.rider_locations.insert_one({
         "id": str(uuid.uuid4()),
-        "rider_id": ids["rider@yeamigo.app"],
+        "rider_id": ids["rider@yeaamigo.app"],
         "lat": 51.5074,
         "lng": -0.1278,
         "is_online": False,
@@ -705,7 +705,7 @@ async def seed():
     await db.restaurants.insert_many([
         {
             "id": rest1_id,
-            "owner_id": ids["owner1@yeamigo.app"],
+            "owner_id": ids["owner1@yeaamigo.app"],
             "name": "Rossi's Wood-Fired Pizza",
             "description": "Authentic Neapolitan pizza, hand-stretched dough, wood-fired in 90 seconds.",
             "cuisine_tags": ["Pizza", "Italian"],
@@ -716,7 +716,7 @@ async def seed():
             "lng": -0.0719,
             "is_open": True,
             "avg_prep_mins": 18,
-            "min_order_gbp": 10.0,
+            "min_order_gbp": 199.0,
             "rating": 4.7,
             "hygiene_score": 5,
             "logo_url": "https://images.unsplash.com/photo-1542528180-a1208c5169a5?w=200",
@@ -726,7 +726,7 @@ async def seed():
         },
         {
             "id": rest2_id,
-            "owner_id": ids["owner2@yeamigo.app"],
+            "owner_id": ids["owner2@yeaamigo.app"],
             "name": "Sharma's Spice Kitchen",
             "description": "Family recipes from Mumbai. Warm spices, fresh herbs, slow-cooked curries.",
             "cuisine_tags": ["Indian", "Vegan"],
@@ -737,7 +737,7 @@ async def seed():
             "lng": -0.1370,
             "is_open": True,
             "avg_prep_mins": 25,
-            "min_order_gbp": 12.0,
+            "min_order_gbp": 249.0,
             "rating": 4.5,
             "hygiene_score": 5,
             "logo_url": "https://images.unsplash.com/photo-1565557623262-b51c2513a641?w=200",
@@ -750,31 +750,31 @@ async def seed():
     # Menu items
     menu = [
         # Rossi's
-        (rest1_id, "Pizzas", "Margherita", "San Marzano tomato, fior di latte, basil", 11.50,
+        (rest1_id, "Pizzas", "Margherita", "San Marzano tomato, fior di latte, basil", 349.0,
          "https://images.unsplash.com/photo-1604068549290-dea0e4a305ca?w=400", ["Vegetarian"], ["Gluten", "Dairy"]),
-        (rest1_id, "Pizzas", "Diavola", "Spicy salami, tomato, mozzarella, chilli oil", 13.90,
+        (rest1_id, "Pizzas", "Diavola", "Spicy salami, tomato, mozzarella, chilli oil", 399.0,
          "https://images.unsplash.com/photo-1628840042765-356cda07504e?w=400", ["Spicy"], ["Gluten", "Dairy"]),
-        (rest1_id, "Pizzas", "Quattro Formaggi", "Four cheese blend on white base", 14.50,
+        (rest1_id, "Pizzas", "Quattro Formaggi", "Four cheese blend on white base", 499.0,
          "https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=400", ["Vegetarian"], ["Gluten", "Dairy"]),
-        (rest1_id, "Sides", "Garlic Bread", "Wood-fired focaccia, garlic butter, herbs", 4.50,
+        (rest1_id, "Sides", "Garlic Bread", "Wood-fired focaccia, garlic butter, herbs", 129.0,
          "https://images.unsplash.com/photo-1573140247632-f8fd74997d5c?w=400", ["Vegetarian"], ["Gluten", "Dairy"]),
-        (rest1_id, "Sides", "Caesar Salad", "Cos lettuce, parmesan, anchovy dressing", 6.90,
+        (rest1_id, "Sides", "Caesar Salad", "Cos lettuce, parmesan, anchovy dressing", 199.0,
          "https://images.unsplash.com/photo-1546793665-c74683f339c1?w=400", [], ["Dairy", "Eggs"]),
-        (rest1_id, "Drinks", "Italian Lemonade", "Sicilian lemons, sparkling", 3.20,
+        (rest1_id, "Drinks", "Italian Lemonade", "Sicilian lemons, sparkling", 89.0,
          "https://images.unsplash.com/photo-1437418747212-8d9709afab22?w=400", ["Vegan"], []),
 
         # Sharma's
-        (rest2_id, "Curries", "Butter Chicken", "Tandoori chicken in creamy tomato sauce", 12.90,
+        (rest2_id, "Curries", "Butter Chicken", "Tandoori chicken in creamy tomato sauce", 329.0,
          "https://images.unsplash.com/photo-1603894584373-5ac82b2ae398?w=400", [], ["Dairy"]),
-        (rest2_id, "Curries", "Chana Masala", "Spiced chickpeas, tomato, ginger", 9.50,
+        (rest2_id, "Curries", "Chana Masala", "Spiced chickpeas, tomato, ginger", 249.0,
          "https://images.unsplash.com/photo-1565557623262-b51c2513a641?w=400", ["Vegan", "Gluten-Free"], []),
-        (rest2_id, "Curries", "Lamb Rogan Josh", "Slow-cooked lamb, Kashmiri spices", 14.50,
+        (rest2_id, "Curries", "Lamb Rogan Josh", "Slow-cooked lamb, Kashmiri spices", 499.0,
          "https://images.unsplash.com/photo-1574484284002-952d92456975?w=400", ["Spicy"], ["Dairy"]),
-        (rest2_id, "Sides", "Garlic Naan", "Tandoor-baked, garlic, coriander", 3.50,
+        (rest2_id, "Sides", "Garlic Naan", "Tandoor-baked, garlic, coriander", 89.0,
          "https://images.unsplash.com/photo-1565557623262-b51c2513a641?w=400", ["Vegetarian"], ["Gluten", "Dairy"]),
-        (rest2_id, "Sides", "Samosa (2pc)", "Crispy pastry, spiced potato & peas", 4.20,
+        (rest2_id, "Sides", "Samosa (2pc)", "Crispy pastry, spiced potato & peas", 119.0,
          "https://images.unsplash.com/photo-1601050690597-df0568f70950?w=400", ["Vegan"], ["Gluten"]),
-        (rest2_id, "Drinks", "Mango Lassi", "Yogurt, mango, cardamom", 3.50,
+        (rest2_id, "Drinks", "Mango Lassi", "Yogurt, mango, cardamom", 89.0,
          "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=400", ["Vegetarian"], ["Dairy"]),
     ]
     docs = []

@@ -45,7 +45,7 @@ export default function Signup() {
         <ScrollView contentContainerStyle={{ padding: space.xxl }}>
           <TouchableOpacity onPress={() => router.back()} testID="back-btn"><Text style={{ color: colors.textMuted }}>← Back</Text></TouchableOpacity>
           <Text style={styles.h1}>Create your account</Text>
-          <Text style={styles.sub}>Pick what brings you to Yeamigo</Text>
+          <Text style={styles.sub}>Pick what brings you to YeaAmigo</Text>
 
           <View style={{ marginVertical: space.lg }}>
             {ROLES.map(r => (

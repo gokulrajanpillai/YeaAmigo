@@ -94,7 +94,7 @@ export default function RestaurantPage() {
             </View>
             <View style={{ flexDirection: 'row', marginTop: 10 }}>
               <View style={styles.infoChip}><Clock size={14} color={colors.brand} /><Text style={styles.infoChipTxt}>{rest.avg_prep_mins}–{rest.avg_prep_mins + 15} min</Text></View>
-              <View style={styles.infoChip}><Text style={styles.infoChipTxt}>£1.99 delivery</Text></View>
+              <View style={styles.infoChip}><Text style={styles.infoChipTxt}>₹49 delivery</Text></View>
               <View style={styles.infoChip}><Text style={styles.infoChipTxt}>Hygiene {rest.hygiene_score}/5</Text></View>
             </View>
             <Text style={{ marginTop: 10, color: colors.textMuted, fontSize: 13, lineHeight: 19 }}>{rest.description}</Text>
@@ -109,10 +109,10 @@ export default function RestaurantPage() {
                 key={it.id} testID={`menu-item-${it.id}`}
                 onPress={() => { setSelectedItem(it); setQty(1); }}
                 style={styles.itemRow}>
-                <View style={{ flex: 1 }}>
-                  <Text style={styles.itemName}>{it.name}</Text>
+                <View style={{ flex: 1, minWidth: 0, paddingRight: 12 }}>
+                  <Text style={styles.itemName} numberOfLines={1}>{it.name}</Text>
                   <Text style={styles.itemDesc} numberOfLines={2}>{it.description}</Text>
-                  <Text style={styles.itemPrice}>£{it.price_gbp.toFixed(2)}</Text>
+                  <Text style={styles.itemPrice}>₹{it.price_gbp.toFixed(0)}</Text>
                 </View>
                 {it.image_url ? <Image source={{ uri: it.image_url }} style={styles.itemImg} /> : null}
               </TouchableOpacity>
@@ -124,7 +124,7 @@ export default function RestaurantPage() {
       {cartCount > 0 && (
         <TouchableOpacity testID="view-cart-bar" onPress={() => router.push('/(customer)/cart' as any)} style={styles.cartBar}>
           <Text style={{ color: '#fff', fontWeight: '700' }}>View cart — {cartCount} item{cartCount > 1 ? 's' : ''}</Text>
-          <Text style={{ color: '#fff', fontWeight: '700' }}>£{cartTotal.toFixed(2)}</Text>
+          <Text style={{ color: '#fff', fontWeight: '700' }}>₹{cartTotal.toFixed(2)}</Text>
         </TouchableOpacity>
       )}
 
@@ -150,7 +150,7 @@ export default function RestaurantPage() {
               </View>
             </View>
             <View style={{ marginTop: 14 }}>
-              <Button testID="add-to-order" title={`Add ${qty} for £${(selectedItem?.price_gbp * qty || 0).toFixed(2)}`} onPress={addToCart} />
+              <Button testID="add-to-order" title={`Add ${qty} for ₹${(selectedItem?.price_gbp * qty || 0).toFixed(0)}`} onPress={addToCart} />
             </View>
           </View>
         </View>
@@ -166,11 +166,11 @@ const styles = StyleSheet.create({
   infoChip: { flexDirection: 'row', alignItems: 'center', backgroundColor: colors.brandLight, paddingHorizontal: 10, paddingVertical: 6, borderRadius: radius.pill, marginRight: 6 },
   infoChipTxt: { color: colors.brandDark, fontSize: 12, fontWeight: '600', marginLeft: 4 },
   catTitle: { fontSize: 18, fontWeight: '700', color: colors.textPrimary, marginBottom: 10 },
-  itemRow: { flexDirection: 'row', paddingVertical: 12, borderBottomWidth: 0.5, borderBottomColor: colors.borderSubtle },
+  itemRow: { flexDirection: 'row', paddingVertical: 14, borderBottomWidth: 0.5, borderBottomColor: colors.borderSubtle, alignItems: 'center' },
   itemName: { fontSize: 15, fontWeight: '600', color: colors.textPrimary },
   itemDesc: { fontSize: 13, color: colors.textMuted, marginTop: 2 },
   itemPrice: { fontSize: 14, fontWeight: '700', color: colors.brand, marginTop: 8 },
-  itemImg: { width: 80, height: 80, borderRadius: radius.md, marginLeft: 12, backgroundColor: colors.bgSurface },
+  itemImg: { width: 88, height: 88, borderRadius: radius.md, backgroundColor: colors.bgSurface, flexShrink: 0 },
   cartBar: { position: 'absolute', left: 16, right: 16, bottom: 24, backgroundColor: colors.brand, borderRadius: radius.lg, padding: 16, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', ...shadow.md },
   sheetBg: { flex: 1, backgroundColor: 'rgba(0,0,0,0.55)', justifyContent: 'flex-end' },
   sheet: { backgroundColor: '#fff', borderTopLeftRadius: 24, borderTopRightRadius: 24, padding: space.xl, maxHeight: '85%' },

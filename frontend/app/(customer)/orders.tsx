@@ -56,7 +56,7 @@ export default function CustomerOrders() {
               </View>
               <Text style={{ color: colors.textMuted, fontSize: 12, marginTop: 4 }}>{o.order_ref} · {new Date(o.created_at).toLocaleString()}</Text>
               <Text style={{ marginTop: 8, color: colors.textPrimary }}>{o.items.slice(0, 2).map((i: any) => `${i.quantity}× ${i.name}`).join(', ')}{o.items.length > 2 ? ` and ${o.items.length - 2} more` : ''}</Text>
-              <Text style={{ marginTop: 8, fontWeight: '700', color: colors.brand }}>£{o.total_gbp.toFixed(2)}</Text>
+              <Text style={{ marginTop: 8, fontWeight: '700', color: colors.brand }}>₹{o.total_gbp.toFixed(2)}</Text>
             </TouchableOpacity>
           ))
         )}

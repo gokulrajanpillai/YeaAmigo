@@ -42,7 +42,7 @@ export default function CartScreen() {
   };
 
   const subtotal = cart?.items.reduce((s, it) => s + it.price_gbp * it.quantity, 0) || 0;
-  const fee = 1.99;
+  const fee = 49.0;
   const total = subtotal + fee;
 
   return (
@@ -69,7 +69,7 @@ export default function CartScreen() {
               <View key={it.item_id} style={styles.row}>
                 <View style={{ flex: 1 }}>
                   <Text style={{ fontSize: 15, fontWeight: '600' }}>{it.name}</Text>
-                  <Text style={{ color: colors.textMuted, fontSize: 13, marginTop: 2 }}>£{it.price_gbp.toFixed(2)} each</Text>
+                  <Text style={{ color: colors.textMuted, fontSize: 13, marginTop: 2 }}>₹{it.price_gbp.toFixed(2)} each</Text>
                 </View>
                 <View style={styles.qtyRow}>
                   <TouchableOpacity testID={`dec-${it.item_id}`} onPress={() => change(it.item_id, -1)} style={styles.qBtn}><Minus size={14} /></TouchableOpacity>
@@ -86,16 +86,16 @@ export default function CartScreen() {
             <View style={styles.input}><TextInput testID="cart-notes" value={notes} onChangeText={setNotes} placeholder="E.g. ring the doorbell" placeholderTextColor={colors.textHint} style={{ fontSize: 14 }} /></View>
 
             <View style={styles.summary}>
-              <View style={styles.sumRow}><Text style={{ color: colors.textMuted }}>Subtotal</Text><Text>£{subtotal.toFixed(2)}</Text></View>
-              <View style={styles.sumRow}><Text style={{ color: colors.textMuted }}>Delivery fee</Text><Text>£{fee.toFixed(2)}</Text></View>
+              <View style={styles.sumRow}><Text style={{ color: colors.textMuted }}>Subtotal</Text><Text>₹{subtotal.toFixed(2)}</Text></View>
+              <View style={styles.sumRow}><Text style={{ color: colors.textMuted }}>Delivery fee</Text><Text>₹{fee.toFixed(2)}</Text></View>
               <View style={[styles.sumRow, { borderTopWidth: 1, borderColor: colors.borderSubtle, paddingTop: 10, marginTop: 6 }]}>
                 <Text style={{ fontWeight: '700', fontSize: 16 }}>Total</Text>
-                <Text style={{ fontWeight: '700', fontSize: 16, color: colors.brand }}>£{total.toFixed(2)}</Text>
+                <Text style={{ fontWeight: '700', fontSize: 16, color: colors.brand }}>₹{total.toFixed(2)}</Text>
               </View>
             </View>
           </ScrollView>
           <View style={{ padding: space.lg, borderTopWidth: 0.5, borderColor: colors.borderSubtle }}>
-            <Button title={`Place Order — £${total.toFixed(2)}`} onPress={place} loading={loading} testID="place-order-btn" />
+            <Button title={`Place Order — ₹${total.toFixed(2)}`} onPress={place} loading={loading} testID="place-order-btn" />
           </View>
         </>
       )}
