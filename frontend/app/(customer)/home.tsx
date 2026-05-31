@@ -1,5 +1,5 @@
-import React, { useEffect, useState, useCallback } from 'react';
-import { View, Text, ScrollView, TouchableOpacity, Image, StyleSheet, RefreshControl, FlatList } from 'react-native';
+import React, { useState, useCallback } from 'react';
+import { View, Text, ScrollView, TouchableOpacity, Image, StyleSheet, RefreshControl, FlatList, TextInput } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter, useFocusEffect } from 'expo-router';
 import { MapPin, Star, Search, Clock, ChevronDown } from 'lucide-react-native';
@@ -19,6 +19,7 @@ export default function CustomerHome() {
   const [data, setData] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState('All');
+  const [query, setQuery] = useState('');
   const [refreshing, setRefreshing] = useState(false);
 
   const load = useCallback(async () => {
@@ -30,7 +31,18 @@ export default function CustomerHome() {
 
   useFocusEffect(useCallback(() => { load(); }, [load]));
 
-  const filtered = filter === 'All' ? data : data.filter(r => (r.cuisine_tags || []).includes(filter));
+  const filtered = data.filter(r => {
+    const matchesCuisine = filter === 'All' || (r.cuisine_tags || []).includes(filter);
+    const q = query.trim().toLowerCase();
+    if (!q) return matchesCuisine;
+    const haystack = [
+      r.name,
+      r.description,
+      ...(r.cuisine_tags || []),
+      r.search_terms || '',
+    ].join(' ').toLowerCase();
+    return matchesCuisine && haystack.includes(q);
+  });
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: '#fff' }} edges={['top']}>
@@ -58,7 +70,15 @@ export default function CustomerHome() {
 
           <View style={styles.searchBar}>
             <Search size={18} color={colors.textHint} />
-            <Text style={{ marginLeft: 10, color: colors.textHint, fontSize: 14 }}>{t('search_placeholder')}</Text>
+            <TextInput
+              testID="restaurant-dish-search"
+              value={query}
+              onChangeText={setQuery}
+              placeholder={t('search_placeholder')}
+              placeholderTextColor={colors.textHint}
+              autoCapitalize="none"
+              style={{ flex: 1, marginLeft: 10, color: colors.textPrimary, fontSize: 14, paddingVertical: 0 }}
+            />
           </View>
 
           <Text style={{ fontSize: 24, fontWeight: '800', marginTop: space.lg, color: colors.textPrimary }}>
@@ -93,7 +113,7 @@ export default function CustomerHome() {
             action={<Button title={t('browse_restaurants')} onPress={() => setFilter('All')} />}
           />
         ) : (
-          <FlatList showsVerticalScrollIndicator={false}
+          <FlatList
             data={filtered}
             keyExtractor={(it) => it.id}
             scrollEnabled={false}

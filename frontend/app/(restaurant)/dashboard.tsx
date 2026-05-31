@@ -59,7 +59,7 @@ export default function RestaurantDashboard() {
         {restaurant && !restaurant.approved && (
           <View style={{ backgroundColor: colors.amberLight, padding: 12, borderRadius: radius.md, marginTop: 14 }}>
             <Text style={{ color: '#A85C00', fontWeight: '600' }}>⏳ Pending admin approval</Text>
-            <Text style={{ color: '#A85C00', fontSize: 13, marginTop: 4 }}>You'll be able to receive orders once approved.</Text>
+            <Text style={{ color: '#A85C00', fontSize: 13, marginTop: 4 }}>{"You'll be able to receive orders once approved."}</Text>
           </View>
         )}
 

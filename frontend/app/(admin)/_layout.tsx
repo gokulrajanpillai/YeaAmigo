@@ -1,3 +1,4 @@
+/* eslint-disable react/display-name */
 import { Tabs } from 'expo-router';
 import { Text } from 'react-native';
 import { LayoutDashboard, Store, ClipboardList, Users } from 'lucide-react-native';

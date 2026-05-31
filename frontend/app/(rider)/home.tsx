@@ -2,7 +2,7 @@ import React, { useState, useCallback } from 'react';
 import { View, Text, ScrollView, TouchableOpacity, StyleSheet, Alert, RefreshControl } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useFocusEffect, useRouter } from 'expo-router';
-import { Bike, Zap, MapPin } from 'lucide-react-native';
+import { Bell, Zap, MapPin } from 'lucide-react-native';
 import { apiGet, apiPatch, apiPost } from '../../src/api';
 import { colors, radius, space, shadow } from '../../src/theme';
 import { Button, Card, StatusBadge } from '../../src/components/UI';
@@ -14,6 +14,7 @@ export default function RiderHome() {
   const [online, setOnline] = useState(false);
   const [available, setAvailable] = useState<any[]>([]);
   const [active, setActive] = useState<any[]>([]);
+  const [notifications, setNotifications] = useState<any[]>([]);
   const [todayCount, setTodayCount] = useState(0);
   const [refreshing, setRefreshing] = useState(false);
 
@@ -23,6 +24,8 @@ export default function RiderHome() {
       setOnline(!!s?.is_online);
       const av = await apiGet('/orders/available');
       setAvailable(av);
+      const notes = await apiGet('/notifications');
+      setNotifications(notes.slice(0, 3));
       const mine = await apiGet('/orders/mine');
       setActive(mine.filter((o: any) => ['assigned', 'en_route'].includes(o.status)));
       const today = new Date().toDateString();
@@ -71,6 +74,21 @@ export default function RiderHome() {
           <Stat label="Deliveries today" value={todayCount.toString()} />
           <Stat label="Earnings" value={`₹${(todayCount * 1.99).toFixed(2)}`} highlight />
         </View>
+
+        <Text style={styles.section}>Order notifications</Text>
+        {notifications.length === 0 ? (
+          <Text style={{ color: colors.textMuted, padding: 12 }}>No delivery notifications yet.</Text>
+        ) : notifications.map(note => (
+          <Card key={note.id} style={{ marginBottom: 10, borderColor: note.read ? colors.borderSubtle : colors.brandSoft, borderWidth: 1 }}>
+            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+              <Bell size={16} color={colors.brand} />
+              <View style={{ marginLeft: 10, flex: 1 }}>
+                <Text style={{ fontWeight: '700', color: colors.textPrimary }}>{note.title}</Text>
+                <Text style={{ color: colors.textMuted, fontSize: 13, marginTop: 2 }}>{note.body}</Text>
+              </View>
+            </View>
+          </Card>
+        ))}
 
         {active.length > 0 && (
           <>

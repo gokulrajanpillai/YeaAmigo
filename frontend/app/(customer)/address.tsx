@@ -154,7 +154,7 @@ export default function AddressPicker() {
     return () => window.removeEventListener('message', fn);
   }, [mode, handleWebMessage]);
 
-  const useCurrent = async () => {
+  const locateCurrent = async () => {
     setLoading(true);
     try {
       if (Platform.OS === 'web' && (navigator as any).geolocation) {
@@ -248,11 +248,6 @@ export default function AddressPicker() {
     setMode('form');
   };
 
-  const onMapPress = () => {
-    setEditingId(null);
-    setMode('map');
-  };
-
   // -------------- RENDER --------------
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: colors.bgSurface }} edges={['top']}>
@@ -289,7 +284,7 @@ export default function AddressPicker() {
             <Plus size={20} color={colors.textMuted} />
           </TouchableOpacity>
 
-          <TouchableOpacity testID="use-current-loc" onPress={() => { useCurrent(); setMode('map'); }} style={styles.actionCard}>
+          <TouchableOpacity testID="use-current-loc" onPress={() => { locateCurrent(); setMode('map'); }} style={styles.actionCard}>
             <View style={[styles.actionIcon, { backgroundColor: colors.accentLight }]}>
               <Locate size={20} color={colors.accentDark} />
             </View>
@@ -383,7 +378,7 @@ export default function AddressPicker() {
                 <ActivityIndicator color={colors.brand} />
               </View>
             )}
-            <TouchableOpacity testID="locate-me" onPress={useCurrent} style={styles.fab}>
+            <TouchableOpacity testID="locate-me" onPress={locateCurrent} style={styles.fab}>
               <Locate size={20} color={colors.brand} />
             </TouchableOpacity>
           </View>

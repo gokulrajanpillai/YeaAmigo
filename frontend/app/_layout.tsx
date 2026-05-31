@@ -2,11 +2,15 @@ import React from 'react';
 import { Platform } from 'react-native';
 import { Stack, useRouter, useSegments } from 'expo-router';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
+import * as SplashScreen from 'expo-splash-screen';
 import { AuthProvider, useAuth } from '../src/auth';
 import { I18nProvider } from '../src/i18n';
 import { AddressProvider } from '../src/address';
 import { StatusBar } from 'expo-status-bar';
 import { colors } from '../src/theme';
+
+// Hold the native splash until the JS root layout is mounted and ready.
+SplashScreen.preventAutoHideAsync().catch(() => {});
 
 const PROTECTED_GROUPS = ['(customer)', '(restaurant)', '(rider)', '(admin)'];
 
@@ -52,6 +56,12 @@ function AuthGuard({ children }: { children: React.ReactNode }) {
 }
 
 export default function RootLayout() {
+  React.useEffect(() => {
+    // Native splash dismissed as soon as root layout mounts.
+    // The JS splash (index.tsx) handles the auth-loading state.
+    SplashScreen.hideAsync().catch(() => {});
+  }, []);
+
   return (
     <SafeAreaProvider>
       <I18nProvider>

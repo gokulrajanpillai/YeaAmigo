@@ -1,6 +1,9 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { mockApi } from './mockApi';
 
-const BASE = (process.env.EXPO_PUBLIC_BACKEND_URL || '').replace(/\/$/, '') + '/api';
+const BACKEND_URL = process.env.EXPO_PUBLIC_BACKEND_URL || '';
+const USE_MOCKS = process.env.EXPO_PUBLIC_USE_MOCKS === '1' || !BACKEND_URL;
+const BASE = BACKEND_URL.replace(/\/$/, '') + '/api';
 
 export async function getToken() {
   return AsyncStorage.getItem('yeamigo_token');
@@ -11,6 +14,7 @@ export async function setToken(t: string | null) {
 }
 
 export async function api(path: string, opts: RequestInit = {}) {
+  if (USE_MOCKS) return mockApi(path, opts);
   const token = await getToken();
   const headers: Record<string, string> = {
     'Content-Type': 'application/json',

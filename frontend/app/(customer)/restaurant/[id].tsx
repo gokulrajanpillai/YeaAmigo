@@ -3,7 +3,7 @@ import { View, Text, ScrollView, Image, TouchableOpacity, StyleSheet, Modal, Ale
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { ArrowLeft, Plus, Minus, Heart, Star, Clock } from 'lucide-react-native';
-import { apiGet, loadCart, saveCart } from '../../../src/api';
+import { Cart, apiGet, loadCart, saveCart } from '../../../src/api';
 import { colors, radius, space, shadow, fmtINR } from '../../../src/theme';
 import { Button, Skeleton } from '../../../src/components/UI';
 import { useI18n } from '../../../src/i18n';
@@ -42,7 +42,7 @@ export default function RestaurantPage() {
   const addToCart = async () => {
     if (!selectedItem) return;
     const existing = await loadCart();
-    let cart = existing && existing.restaurant_id === id
+    let cart: Cart = existing && existing.restaurant_id === id
       ? existing
       : { restaurant_id: id!, restaurant_name: rest.name, items: [] };
     if (existing && existing.restaurant_id !== id) {
